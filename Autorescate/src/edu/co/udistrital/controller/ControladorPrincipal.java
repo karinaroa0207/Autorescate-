@@ -88,11 +88,7 @@ public class ControladorPrincipal {
     }
 
     private void cerrarSolicitud() {
-        int id = parseEntero(vista.getCerrarId(), -1);
-        if (id <= 0) {
-            vista.agregarMensaje("Ingresa un ID valido para cerrar el caso.");
-            return;
-        }
+        String id = vista.getCerrarId();
 
         if (modelo.cerrarSolicitud(id)) {
             vista.agregarMensaje("Solicitud #" + id + " cerrada y recursos liberados.");

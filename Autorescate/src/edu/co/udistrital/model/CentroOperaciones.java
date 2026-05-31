@@ -67,11 +67,11 @@ public class CentroOperaciones {
         return true;
     }
 
-    public boolean cerrarSolicitud(int idSolicitud) {
+    public boolean cerrarSolicitud(String idSolicitud) {
         Solicitud solicitud = casosEnEjecucion.remover(new Criterio<Solicitud>() {
             @Override
             public boolean cumple(Solicitud dato) {
-                return dato.getId() == idSolicitud;
+                return dato.getId().equals(idSolicitud);
             }
         });
 
@@ -96,7 +96,7 @@ public class CentroOperaciones {
                 casosEnEjecucion.remover(new Criterio<Solicitud>() {
                     @Override
                     public boolean cumple(Solicitud dato) {
-                        return dato.getId() == solicitud.getId();
+                        return dato.getId().equals(solicitud.getId());
                     }
                 });
                 ultimaOp.getUnidad().setDisponible(true);
@@ -111,7 +111,7 @@ public class CentroOperaciones {
                 casosCerrados.remover(new Criterio<Solicitud>() {
                     @Override
                     public boolean cumple(Solicitud dato) {
-                        return dato.getId() == solicitud.getId();
+                        return dato.getId().equals(solicitud.getId());
                     }
                 });
                 solicitud.asignarRecursos(ultimaOp.getUnidad(), ultimaOp.getTecnico());

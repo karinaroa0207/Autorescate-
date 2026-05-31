@@ -1,6 +1,6 @@
 package edu.co.udistrital.model;
 
-public class ColaPrioridad<T extends Comparable<T>> {
+public class ColaPrioridad<T extends MiComparable<T>> {
     
     private Nodo<T> frente;
     private Nodo<T> fin;
