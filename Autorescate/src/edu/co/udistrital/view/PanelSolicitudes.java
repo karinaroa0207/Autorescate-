@@ -13,6 +13,12 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 
 public class PanelSolicitudes extends JPanel {
 
@@ -76,7 +82,9 @@ public class PanelSolicitudes extends JPanel {
         tablaPendientes = TablaFactory.crear(new String[]{"ID", "Cliente", "Servicio", "Zona", "Prioridad", "Estado"});
         tablaEjecucion = TablaFactory.crear(new String[]{"ID", "Cliente", "Unidad", "Tecnico", "Estado"});
         tablaCerrados = TablaFactory.crear(new String[]{"ID", "Cliente", "Servicio", "Unidad", "Tecnico", "Cierre"});
-
+        agregarMenuCopiarId(tablaPendientes);
+        agregarMenuCopiarId(tablaEjecucion);
+        agregarMenuCopiarId(tablaCerrados);
         JTabbedPane tablas = new JTabbedPane();
         tablas.addTab("Pendientes", new JScrollPane(tablaPendientes));
         tablas.addTab("En ejecucion", new JScrollPane(tablaEjecucion));
@@ -95,7 +103,7 @@ public class PanelSolicitudes extends JPanel {
         gbc.gridx = x + 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel.add(campo, gbc);
-    }
+    }        
 
     public String getCliente() { return txtCliente.getText().trim(); }
     public String getDescripcion() { return txtDescripcion.getText().trim(); }
@@ -115,5 +123,37 @@ public class PanelSolicitudes extends JPanel {
         txtDescripcion.setText("");
         txtZonaSolicitud.setText("");
         txtPrioridad.setText("0");
+    }
+    
+    private void agregarMenuCopiarId(JTable tabla) {
+
+        JPopupMenu menu = new JPopupMenu();
+        JMenuItem copiar = new JMenuItem("Copiar ID");
+        menu.add(copiar);
+
+        copiar.addActionListener(e -> {
+            int fila = tabla.getSelectedRow();
+
+            if (fila >= 0) {
+                String id = tabla.getValueAt(fila, 0).toString();
+
+                Toolkit.getDefaultToolkit()
+                        .getSystemClipboard()
+                        .setContents(new StringSelection(id), null);
+            }
+        });
+
+        tabla.setComponentPopupMenu(menu);
+
+        tabla.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                int fila = tabla.rowAtPoint(e.getPoint());
+
+                if (fila >= 0) {
+                    tabla.setRowSelectionInterval(fila, fila);
+                }
+            }
+        });
     }
 }
