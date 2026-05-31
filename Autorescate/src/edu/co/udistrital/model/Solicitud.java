@@ -1,11 +1,11 @@
 package edu.co.udistrital.model;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
-public class Solicitud implements Comparable<Solicitud> {
+public class Solicitud implements MiComparable<Solicitud> {
     
-    private static int contadorId = 1;
-    private int id;
+    private String id;
     private String cliente;
     private String descripcion;
     private String zona;
@@ -23,7 +23,7 @@ public class Solicitud implements Comparable<Solicitud> {
     }
 
     public Solicitud(String cliente, String descripcion, String zona, String tipoServicio, int prioridad) {
-        this.id = contadorId++;
+        this.id = UUID.randomUUID().toString();
         this.cliente = cliente;
         this.descripcion = descripcion;
         this.zona = zona;
@@ -34,7 +34,7 @@ public class Solicitud implements Comparable<Solicitud> {
         this.fechaRegistro = LocalDateTime.now();
     }
 
-    public int getId() { return id; }
+    public String getId() { return id; }
     public String getCliente() { return cliente; }
     public String getDescripcion() { return descripcion; }
     public String getZona() { return zona; }
