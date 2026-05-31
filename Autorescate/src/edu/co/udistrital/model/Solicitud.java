@@ -12,7 +12,7 @@ public class Solicitud implements MiComparable<Solicitud> {
     private String tipoServicio;
     private int prioridad;
     private boolean esCritica;
-    private String estado;
+    private EstadoSolicitud estado;
     private Unidad unidadAsignada;
     private Tecnico tecnicoAsignado;
     private LocalDateTime fechaRegistro;
@@ -30,7 +30,7 @@ public class Solicitud implements MiComparable<Solicitud> {
         this.tipoServicio = tipoServicio;
         this.prioridad = prioridad;
         this.esCritica = prioridad > 0;
-        this.estado = "Pendiente";
+        this.estado = EstadoSolicitud.PENDIENTE;
         this.fechaRegistro = LocalDateTime.now();
     }
 
@@ -41,7 +41,7 @@ public class Solicitud implements MiComparable<Solicitud> {
     public String getTipoServicio() { return tipoServicio; }
     public int getPrioridad() { return prioridad; }
     public boolean isEsCritica() { return esCritica; }
-    public String getEstado() { return estado; }
+    public EstadoSolicitud getEstado() { return estado; }
     public Unidad getUnidadAsignada() { return unidadAsignada; }
     public Tecnico getTecnicoAsignado() { return tecnicoAsignado; }
     public LocalDateTime getFechaRegistro() { return fechaRegistro; }
@@ -50,21 +50,21 @@ public class Solicitud implements MiComparable<Solicitud> {
     public void asignarRecursos(Unidad unidad, Tecnico tecnico) {
         this.unidadAsignada = unidad;
         this.tecnicoAsignado = tecnico;
-        this.estado = "En ejecucion";
+        this.estado = EstadoSolicitud.EN_PROCESO;
     }
 
     public void marcarComoAtendida() {
         if (unidadAsignada == null || tecnicoAsignado == null) {
             return;
         }
-        this.estado = "Atendida";
+        this.estado = EstadoSolicitud.ATENDIDA;
         this.fechaCierre = LocalDateTime.now();
     }
 
     public void revertirAsignacion() {
         this.unidadAsignada = null;
         this.tecnicoAsignado = null;
-        this.estado = "Pendiente";
+        this.estado = EstadoSolicitud.PENDIENTE;
         this.fechaCierre = null;
     }
 
