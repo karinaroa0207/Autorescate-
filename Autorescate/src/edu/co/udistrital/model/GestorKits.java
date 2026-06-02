@@ -34,7 +34,8 @@ public class GestorKits {
     public boolean revisarKit() {
         Kit kit = kitsEnRevision.desapilar();
         if (kit != null) {
-            kit.setEstado(EstadoKit.DISPONIBLE);            
+            kit.setEstado(EstadoKit.DISPONIBLE);   
+            kitsListos.apilar(kit);
             return true;
         }
         return false;
@@ -64,8 +65,8 @@ public class GestorKits {
         return resultado;
     }
     
-    public Kit getUltimoListo() {
-        return kitsListos.getCima().getDato();
+    public Kit getUltimoListo() {        
+        return kitsListos.peek();
     }
     
     public Lista<Kit> getAllKits() {
@@ -86,6 +87,16 @@ public class GestorKits {
                 return;
             }
         }
+    }
+    
+    public void revertirRevision(Kit kit) {
+        Kit aux = kitsListos.desapilar();
+        if(aux != kit) {
+            kitsListos.apilar(aux);
+            return;
+        }
+        kit.setEstado(EstadoKit.EN_REVISION);
+        kitsEnRevision.apilar(kit);
     }
     
 }

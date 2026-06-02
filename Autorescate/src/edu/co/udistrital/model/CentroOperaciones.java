@@ -66,7 +66,7 @@ public class CentroOperaciones {
                     new Operacion(
                             TipoOperacion.KIT_REVISADO,
                             "Kit revisado y listo para uso",
-                            null
+                            gKits.getUltimoListo()
                     ));
             return gKits.getUltimoListo();
         }
@@ -251,7 +251,11 @@ public class CentroOperaciones {
                 case KIT_CREADO: {
                     gKits.revertirCreacion();
                     return true;
-                }       
+                }
+                case KIT_REVISADO: {
+                    gKits.revertirRevision((Kit) ultimaOp.getEstadoAnterior());
+                    return true;
+                }
                 case UNIDAD_ELIMINADO: {
                     gUni.agregarUnidad((Unidad) ultimaOp.getEstadoAnterior());
                     return true;

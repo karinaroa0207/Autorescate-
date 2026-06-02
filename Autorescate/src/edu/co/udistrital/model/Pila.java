@@ -68,4 +68,11 @@ public class Pila<T> implements MiIterable<T>{
             actual = actual.getSiguiente();
         }
     }
+    
+    public T peek() {
+        if(cima == null) {
+            return null;
+        }
+        return cima.getDato();
+    }
 }
