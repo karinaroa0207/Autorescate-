@@ -315,6 +315,10 @@ public class CentroOperaciones {
     public Lista<Kit> getKitsDisponibles() {
         return gKits.getKitsListos();
     }
+    
+    public Lista<Kit> getKitsRevision() {
+        return gKits.getKitsEnRevision();
+    }
 
     public Solicitud verSiguienteSolicitud() {
         return gSol.verSiguiente();

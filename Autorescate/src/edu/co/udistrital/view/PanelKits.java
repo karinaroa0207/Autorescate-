@@ -8,13 +8,18 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import javax.swing.JComboBox;
 
 public class PanelKits extends JPanel {
 
     private JTextField txtNombre;
     private JTextField txtDescripcion;
+
     private JButton btnCrearKit;
     private JButton btnRevisarKit;
+
+    private JComboBox<String> cmbFiltroEstado;
+
     private JTable tablaKits;
 
     public PanelKits() {
@@ -30,33 +35,50 @@ public class PanelKits extends JPanel {
     }
 
     private JPanel crearFormulario() {
-        JPanel formulario = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        formulario.setBorder(
+
+        JPanel panelPrincipal = new JPanel(new BorderLayout(5, 5));
+        panelPrincipal.setBorder(
                 javax.swing.BorderFactory.createTitledBorder("Crear Kit")
         );
 
+        JPanel filaFormulario = new JPanel(new FlowLayout(FlowLayout.LEFT));
+
         txtNombre = new JTextField(15);
         txtDescripcion = new JTextField(20);
+
         btnCrearKit = new JButton("Crear");
-        JButton btnLimpiar = new JButton("Limpiar fomulario");
+
+        JButton btnLimpiar = new JButton("Limpiar formulario");
         btnLimpiar.addActionListener(e -> {
             txtNombre.setText("");
             txtDescripcion.setText("");
-            }
-        );
+        });
+
         btnRevisarKit = new JButton("Revisar Kit");
 
-        formulario.add(new JLabel("Nombre"));
-        formulario.add(txtNombre);
+        filaFormulario.add(new JLabel("Nombre"));
+        filaFormulario.add(txtNombre);
 
-        formulario.add(new JLabel("Descripcion"));
-        formulario.add(txtDescripcion);
+        filaFormulario.add(new JLabel("Descripción"));
+        filaFormulario.add(txtDescripcion);
 
-        formulario.add(btnCrearKit);
-        formulario.add(btnLimpiar);
-        formulario.add(btnRevisarKit);
+        filaFormulario.add(btnCrearKit);
+        filaFormulario.add(btnLimpiar);
+        filaFormulario.add(btnRevisarKit);
 
-        return formulario;
+        JPanel filaFiltro = new JPanel(new FlowLayout(FlowLayout.LEFT));
+
+        cmbFiltroEstado = new JComboBox<>(
+                new String[]{"Todos", "Listos", "En revisión"}
+        );
+
+        filaFiltro.add(new JLabel("Mostrar"));
+        filaFiltro.add(cmbFiltroEstado);
+
+        panelPrincipal.add(filaFormulario, BorderLayout.NORTH);
+        panelPrincipal.add(filaFiltro, BorderLayout.SOUTH);
+
+        return panelPrincipal;
     }
 
     public String getNombre() {
@@ -67,15 +89,23 @@ public class PanelKits extends JPanel {
         return txtDescripcion.getText().trim();
     }
 
+    public String getFiltroEstado() {
+        return (String) cmbFiltroEstado.getSelectedItem();
+    }
+
+    public JComboBox<String> getCmbFiltroEstado() {
+        return cmbFiltroEstado;
+    }
+
     public JButton getBtnCrearKit() {
         return btnCrearKit;
     }
 
-    public JTable getTablaKits() {
-        return tablaKits;
-    }
-
     public JButton getBtnRevisarKit() {
         return btnRevisarKit;
+    }
+
+    public JTable getTablaKits() {
+        return tablaKits;
     }
 }

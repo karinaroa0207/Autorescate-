@@ -18,6 +18,7 @@ public class ControlInventario {
         this.vMensajes = vMensajes;
         vista.getBtnCrearKit().addActionListener(e -> crearKit());
         vista.getBtnRevisarKit().addActionListener(e -> revisarKit());
+        vista.getCmbFiltroEstado().addActionListener(e -> actualizarTabla());
     }
 
     public void crearKit() {
@@ -29,24 +30,40 @@ public class ControlInventario {
         }
         Kit kit = new Kit(nombre, descripcion);
         gestor.agregarKit(kit);
-        TablaUtils.agregarFila(vista.getTablaKits(), kit.toRow());
+        actualizarTabla();
     }
 
     public void revisarKit() {
         if (gestor.revisarKit() != null) {
             vMensajes.mostrarMensaje("Kit Listo");
+            actualizarTabla();
         } else {
             vMensajes.mostrarMensaje("No hay kits para revisar");
         }
     }
 
     public void actualizarTabla() {
-        TablaUtils.limpiarTabla(vista.getTablaKits());
-        Lista<Kit> kits = gestor.getKits();
+        String filtro = vista.getFiltroEstado();
+        Lista<Kit> kits = null;
+        switch (filtro) {
+            case "Todos":
+                kits = gestor.getKits();
+                break;
+            case "Listos":
+                kits = gestor.getKitsDisponibles();
+                break;
+            case "En revisión":
+                kits = gestor.getKitsRevision();
+                break;
+            default:
+                break;
+        }
+        if (kits == null) return;
+        TablaUtils.limpiarTabla(vista.getTablaKits());        
         for (int i = 0; i < kits.size(); i++) {
             Kit kit = kits.get(i);
             TablaUtils.agregarFila(vista.getTablaKits(), kit.toRow());
-        }
+        }        
     }
 
 }

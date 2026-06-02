@@ -5,7 +5,7 @@ public class GestorKits {
     private Pila<Kit> kitsEnRevision;
     private Pila<Kit> kitsListos;   
     private Lista<Kit> kits;
-
+    
     public GestorKits() {
         this.kitsEnRevision = new Pila<>();
         this.kitsListos = new Pila<>();    
@@ -42,7 +42,7 @@ public class GestorKits {
 
     public Lista<Kit> getKitsListos() {
         Lista<Kit> resultado = new ArregloLista<>();
-        MiIterador<Kit> it = this.kitsListos.iterator();
+        MiIterador<Kit> it = kitsListos.iterator();
         
         while (it.hasNext()) {
             Kit kit = it.next();
@@ -54,7 +54,7 @@ public class GestorKits {
 
     public Lista<Kit> getKitsEnRevision() {
         Lista<Kit> resultado = new ArregloLista<>();
-        MiIterador<Kit> it = this.kitsEnRevision.iterator();
+        MiIterador<Kit> it = kitsEnRevision.iterator();
         
         while (it.hasNext()) {
             Kit kit = it.next();
