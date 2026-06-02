@@ -35,9 +35,28 @@ public class GestorTecnico {
         return disponibles;
     }
 
+    public Lista<Tecnico> obtenerDisponiblesPorZona(String zona) {
+        Lista<Tecnico> disponibles = new ArregloLista<>();
+        Nodo<Tecnico> actual = tecnicos.getCabeza();
+        while (actual != null) {
+            Tecnico t = actual.getDato();
+            if (t.puedeAsignarse() && zonaCoincide(t.getZona(), zona)) {
+                disponibles.add(t);
+            }
+            actual = actual.getSiguiente();
+        }
+        return disponibles;
+    }
+
     public Tecnico obtenerDisponible() {
         return tecnicos.buscar(t
                 -> t.puedeAsignarse()
+        );
+    }
+
+    public Tecnico obtenerDisponibleEnZona(String zona) {
+        return tecnicos.buscar(t
+                -> t.puedeAsignarse() && zonaCoincide(t.getZona(), zona)
         );
     }
 
@@ -74,6 +93,13 @@ public class GestorTecnico {
         return tecnicos.remover(t
                 -> t.getIdentificacion().equals(id)
         );
+    }
+
+    private boolean zonaCoincide(String zonaTecnico, String zonaSolicitud) {
+        if (zonaTecnico == null || zonaSolicitud == null) {
+            return false;
+        }
+        return zonaTecnico.trim().equalsIgnoreCase(zonaSolicitud.trim());
     }
 
 }

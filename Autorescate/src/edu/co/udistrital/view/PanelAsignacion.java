@@ -28,6 +28,7 @@ public class PanelAsignacion extends JPanel {
 
     private JTable tablaUnidades;
     private JTable tablaTecnicos;
+    private JTable tablaKits;
 
     private JTabbedPane tabRecursos;
 
@@ -75,27 +76,17 @@ public class PanelAsignacion extends JPanel {
             "ID", "Zona", "Tipo"
         });
         tablaUnidades.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        ((DefaultTableModel) tablaUnidades.getModel()).addRow(new String[]{
-            "1", "Zona", "Tipo"
-        });
-
-        ((DefaultTableModel) tablaUnidades.getModel()).addRow(new String[]{
-            "2", "Zona", "Tipo"
-        });
         tablaTecnicos = TablaFactory.crear(new String[]{
             "ID", "Nombre", "Especialidad", "Zona"
         });
-
-        ((DefaultTableModel) tablaUnidades.getModel()).addRow(new String[]{
-            "1ID", "Nombre", "Especialidad", "Zona"
-        });
-        ((DefaultTableModel) tablaUnidades.getModel()).addRow(new String[]{
-            "2ID", "Nombre", "Especialidad", "Zona"
-        });
         tablaTecnicos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tablaKits = TablaFactory.crear(new String[]{
+            "ID", "Codigo", "Descripcion"
+        });
         tabRecursos = new JTabbedPane();
         tabRecursos.addTab("Unidades disponibles", new JScrollPane(tablaUnidades));
         tabRecursos.addTab("Tecnicos disponibles", new JScrollPane(tablaTecnicos));
+        tabRecursos.addTab("Kits listos", new JScrollPane(tablaKits));
         return tabRecursos;
     }
 
@@ -132,6 +123,7 @@ public class PanelAsignacion extends JPanel {
     public void limpiarTablas(JTable tabla) {
         ((DefaultTableModel) tablaTecnicos.getModel()).setRowCount(0);
         ((DefaultTableModel) tablaUnidades.getModel()).setRowCount(0);
+        ((DefaultTableModel) tablaKits.getModel()).setRowCount(0);
     }
 
     public void agregarFila(String tabla, Object[] datos) {
@@ -139,6 +131,8 @@ public class PanelAsignacion extends JPanel {
             ((DefaultTableModel) tablaTecnicos.getModel()).addRow(datos);
         } else if (tabla.equals("unidades")) {
             ((DefaultTableModel) tablaUnidades.getModel()).addRow(datos);
+        } else if (tabla.equals("kits")) {
+            ((DefaultTableModel) tablaKits.getModel()).addRow(datos);
         }
     }
 
@@ -180,6 +174,10 @@ public class PanelAsignacion extends JPanel {
 
     public JTable getTablaTecnicos() {
         return tablaTecnicos;
+    }
+
+    public JTable getTablaKits() {
+        return tablaKits;
     }
     
     

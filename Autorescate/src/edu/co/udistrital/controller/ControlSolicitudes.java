@@ -1,6 +1,8 @@
 package edu.co.udistrital.controller;
 
 import edu.co.udistrital.model.CentroOperaciones;
+import edu.co.udistrital.model.Cliente;
+import edu.co.udistrital.model.Kit;
 import edu.co.udistrital.model.Lista;
 import edu.co.udistrital.model.Solicitud;
 import edu.co.udistrital.model.Tecnico;
@@ -63,29 +65,41 @@ public class ControlSolicitudes {
     }
 
     public void actualizarRecursos() {
-        Lista<Unidad> u = modelo.getUnidadesDisponibles();
+        Solicitud solicitud = modelo.verSiguienteSolicitud();
+        Lista<Unidad> u = solicitud != null
+                ? modelo.getUnidadesDisponibles(solicitud.getZona())
+                : modelo.getUnidadesDisponibles();
         TablaUtils.limpiarTabla(pAsig.getTablaUnidades());
         for (int i = 0; i < u.size(); i++) {
             Unidad s = u.get(i);
             TablaUtils.agregarFila(pAsig.getTablaUnidades(), s.toRowDisponible());
         }
-        Lista<Tecnico> t = modelo.getTecnicosDisponibles();
+        Lista<Tecnico> t = solicitud != null
+                ? modelo.getTecnicosDisponibles(solicitud.getZona())
+                : modelo.getTecnicosDisponibles();
         TablaUtils.limpiarTabla(pAsig.getTablaTecnicos());
         for (int i = 0; i < t.size(); i++) {
             Tecnico s = t.get(i);
             TablaUtils.agregarFila(pAsig.getTablaTecnicos(), s.toRowDisponible());
         }
+        Lista<Kit> kits = modelo.getKitsDisponibles();
+        TablaUtils.limpiarTabla(pAsig.getTablaKits());
+        for (int i = 0; i < kits.size(); i++) {
+            Kit kit = kits.get(i);
+            TablaUtils.agregarFila(pAsig.getTablaKits(), kit.toRowDisponible());
+        }
     }
 
     public void registrarSolicitud() {
-        String cliente = vista.getCliente();
+        Cliente cliente = vista.getClienteSeleccionado();
         String descripcion = vista.getDescripcion();
         String zona = valorPorDefecto(vista.getZonaSolicitud(), "General");
         String servicio = vista.getTipoServicio();
         int prioridad = parseEntero(vista.getPrioridad(), 0);
 
-        if (cliente.isEmpty() || descripcion.isEmpty()) {
-            vMensajes.agregarMensaje("La solicitud debe tener cliente y descripcion.");
+        if (cliente == null || descripcion.isEmpty()) {
+            vMensajes.agregarMensaje("La solicitud debe tener un cliente registrado y descripcion.");
+            vMensajes.mostrarMensajeWarning("Primero registre o seleccione un cliente para la solicitud.", "Cliente requerido");
             return;
         }
         Solicitud s = new Solicitud(cliente, descripcion, zona, servicio, prioridad);
@@ -98,11 +112,11 @@ public class ControlSolicitudes {
     public void asignarSiguiente() {
         if (modelo.asignarRecurso()) {
             actualizarTabla();
-            vMensajes.agregarMensaje("Se asigno la siguiente solicitud segun prioridad y orden de llegada.");
-            vMensajes.mostrarMensaje("Se asigno la siguiente solicitud segun prioridad y orden de llegada.");
+            vMensajes.agregarMensaje("Se asigno la siguiente solicitud con unidad, tecnico y kit listo.");
+            vMensajes.mostrarMensaje("Se asigno la siguiente solicitud con unidad, tecnico y kit listo.");
         } else {
-            vMensajes.agregarMensaje("No fue posible asignar: faltan solicitudes, unidades, tecnicos o kits disponibles.");
-            vMensajes.mostrarMensaje("No fue posible asignar: faltan solicitudes, unidades, tecnicos o kits disponibles.");
+            vMensajes.agregarMensaje("No fue posible asignar: faltan recursos de la misma zona o kits listos.");
+            vMensajes.mostrarMensaje("No fue posible asignar: faltan recursos de la misma zona o kits listos.");
         }
     }
 
@@ -110,18 +124,24 @@ public class ControlSolicitudes {
         String id = pAsig.getIdSolicitudSeleccionada();
         String idTecnico = pAsig.getTecnicoSeleccionado();
         String idUnidad = pAsig.getUnidadSeleccionado();      
-        if(id.isEmpty()) {
+        if (id.isEmpty() || "-".equals(id)) {
             vMensajes.agregarMensaje("No hay solicitud");
             vMensajes.mostrarMensaje("No hay solicitud");
+            return;
+        }
+        if (idUnidad.isEmpty() || idTecnico.isEmpty()) {
+            vMensajes.agregarMensaje("Debe seleccionar una unidad y un tecnico disponibles.");
+            vMensajes.mostrarMensaje("Seleccione una unidad y luego un tecnico disponible antes de confirmar el despacho.");
+            return;
         } 
         if (modelo.asignarRecurso(id, idUnidad, idTecnico)) {            
             actualizarTabla();
             actualizarAsignacion();
-            vMensajes.agregarMensaje("Se asigno la siguiente solicitud segun prioridad y orden de llegada.");
-            vMensajes.mostrarMensaje("Se asigno la siguiente solicitud segun prioridad y orden de llegada.");
+            vMensajes.agregarMensaje("Se confirmo el despacho con unidad, tecnico y kit listo.");
+            vMensajes.mostrarMensaje("Se confirmo el despacho con unidad, tecnico y kit listo.");
         } else {
-            vMensajes.agregarMensaje("No fue posible asignar: faltan solicitudes, unidades, tecnicos o kits disponibles.");
-            vMensajes.mostrarMensaje("No fue posible asignar: faltan solicitudes, unidades, tecnicos o kits disponibles.");
+            vMensajes.agregarMensaje("No fue posible asignar: faltan recursos de la misma zona o kits listos.");
+            vMensajes.mostrarMensaje("No fue posible asignar: faltan recursos de la misma zona o kits listos.");
         }
 
     }
@@ -131,8 +151,8 @@ public class ControlSolicitudes {
 
         if (modelo.cerrarSolicitud(id)) {
             actualizarTabla();
-            vMensajes.agregarMensaje("Solicitud #" + id + " cerrada y recursos liberados.");
-            vMensajes.mostrarMensaje("Solicitud #" + id + " cerrada y recursos liberados.");
+            vMensajes.agregarMensaje("Solicitud #" + id + " cerrada. Unidad y tecnico liberados; kit enviado a revision.");
+            vMensajes.mostrarMensaje("Solicitud #" + id + " cerrada. Unidad y tecnico liberados; kit enviado a revision.");
         } else {
             vMensajes.agregarMensaje("No se encontro una solicitud en ejecucion con ese ID.");
             vMensajes.mostrarMensaje("No se encontro una solicitud en ejecucion con ese ID.");

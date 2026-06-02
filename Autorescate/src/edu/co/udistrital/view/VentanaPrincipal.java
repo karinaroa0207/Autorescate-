@@ -22,6 +22,7 @@ public class VentanaPrincipal extends JFrame implements VisualizadorMensajes{
 
     private PanelSolicitudes panelSolicitudes;
     private PanelRecursos panelRecursos;
+    private PanelClientes panelClientes;
     private PanelTecnicos panelTecnicos;
     private PanelKits panelKits;
     private PanelHistorial panelHistorial;
@@ -40,6 +41,7 @@ public class VentanaPrincipal extends JFrame implements VisualizadorMensajes{
 
         panelSolicitudes = new PanelSolicitudes();
         panelRecursos = new PanelRecursos();
+        panelClientes = new PanelClientes();
         panelTecnicos = new PanelTecnicos();
         panelKits = new PanelKits();
         panelHistorial = new PanelHistorial();
@@ -71,6 +73,7 @@ public class VentanaPrincipal extends JFrame implements VisualizadorMensajes{
     private JTabbedPane crearPestanas() {
         tabs = new JTabbedPane();
         tabs.addTab("Solicitudes", panelSolicitudes);
+        tabs.addTab("Clientes", panelClientes);
         tabs.addTab("Unidades", panelRecursos);
         tabs.addTab("Tecnicos", panelTecnicos);
         tabs.addTab("Kits", panelKits);
@@ -115,6 +118,7 @@ public class VentanaPrincipal extends JFrame implements VisualizadorMensajes{
     public JTable getTablaEjecucion() { return panelSolicitudes.getTablaEjecucion(); }
     public JTable getTablaCerrados() { return panelSolicitudes.getTablaCerrados(); }
     public JTable getTablaUnidades() { return panelRecursos.getTablaUnidades(); }
+    public JTable getTablaClientes() { return panelClientes.getTablaClientes(); }
     public JTable getTablaTecnicos() { return panelTecnicos.getTablaTecnicos(); }
     public JTable getTablaKits() { return panelKits.getTablaKits(); }
     public JTable getTablaHistorial() { return panelHistorial.getTablaHistorial(); }
@@ -173,6 +177,10 @@ public class VentanaPrincipal extends JFrame implements VisualizadorMensajes{
 
     public PanelRecursos getPanelRecursos() {
         return panelRecursos;
+    }
+
+    public PanelClientes getPanelClientes() {
+        return panelClientes;
     }
 
     public PanelHistorial getPanelHistorial() {

@@ -1,5 +1,7 @@
 package edu.co.udistrital.view;
 
+import edu.co.udistrital.model.Cliente;
+import edu.co.udistrital.model.Lista;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -24,7 +26,7 @@ import javax.swing.text.DefaultEditorKit;
 
 public class PanelSolicitudes extends JPanel {
 
-    private JTextField txtCliente;
+    private JComboBox<Cliente> cmbCliente;
     private JTextField txtDescripcion;
     private JTextField txtZonaSolicitud;
     private JTextField txtPrioridad;
@@ -64,7 +66,8 @@ public class PanelSolicitudes extends JPanel {
         JPanel formulario = new JPanel(new GridBagLayout());
         formulario.setBorder(javax.swing.BorderFactory.createTitledBorder("Registrar solicitud"));
 
-        txtCliente = new JTextField(15);
+        cmbCliente = new JComboBox<>();
+        cmbCliente.setPrototypeDisplayValue(new Cliente("0000000000", "Cliente seleccionado", "", "", ""));
         txtDescripcion = new JTextField(20);
         txtZonaSolicitud = new JTextField(12);
         txtPrioridad = new JTextField("0", 5);
@@ -81,7 +84,7 @@ public class PanelSolicitudes extends JPanel {
         btnLimpiarCerrrar.addActionListener(e -> txtCerrarId.setText(""));
         agregarMenuContextual(txtCerrarId);
 
-        agregarCampo(formulario, "Cliente", txtCliente, 0, 0);
+        agregarCampo(formulario, "Cliente", cmbCliente, 0, 0);
         agregarCampo(formulario, "Descripcion", txtDescripcion, 2, 0);
 
         agregarCampo(formulario, "Zona", txtZonaSolicitud, 0, 1);
@@ -121,8 +124,8 @@ public class PanelSolicitudes extends JPanel {
 
     private JTabbedPane crearTablas() {
         tablaPendientes = TablaFactory.crear(new String[]{"ID", "Cliente", "Servicio", "Zona", "Prioridad", "Estado"});
-        tablaEjecucion = TablaFactory.crear(new String[]{"ID", "Cliente", "Unidad", "Tecnico", "Estado"});
-        tablaCerrados = TablaFactory.crear(new String[]{"ID", "Cliente", "Servicio", "Unidad", "Tecnico", "Cierre"});
+        tablaEjecucion = TablaFactory.crear(new String[]{"ID", "Cliente", "Unidad", "Tecnico", "Kit", "Estado"});
+        tablaCerrados = TablaFactory.crear(new String[]{"ID", "Cliente", "Servicio", "Unidad", "Tecnico", "Kit", "Cierre"});
         agregarMenuCopiarId(tablaPendientes);
         agregarMenuCopiarId(tablaEjecucion);
         agregarMenuCopiarId(tablaCerrados);
@@ -146,8 +149,8 @@ public class PanelSolicitudes extends JPanel {
         panel.add(campo, gbc);
     }
 
-    public String getCliente() {
-        return txtCliente.getText().trim();
+    public Cliente getClienteSeleccionado() {
+        return (Cliente) cmbCliente.getSelectedItem();
     }
 
     public String getDescripcion() {
@@ -211,10 +214,23 @@ public class PanelSolicitudes extends JPanel {
     }
 
     public void limpiarFormulario() {
-        txtCliente.setText("");
         txtDescripcion.setText("");
         txtZonaSolicitud.setText("");
         txtPrioridad.setText("0");
+    }
+
+    public void cargarClientes(Lista<Cliente> clientes) {
+        Cliente seleccionado = getClienteSeleccionado();
+        String documentoSeleccionado = seleccionado != null ? seleccionado.getDocumento() : null;
+
+        cmbCliente.removeAllItems();
+        for (int i = 0; i < clientes.size(); i++) {
+            Cliente cliente = clientes.get(i);
+            cmbCliente.addItem(cliente);
+            if (documentoSeleccionado != null && documentoSeleccionado.equals(cliente.getDocumento())) {
+                cmbCliente.setSelectedItem(cliente);
+            }
+        }
     }
 
     private void agregarMenuCopiarId(JTable tabla) {

@@ -11,5 +11,6 @@ public enum TipoOperacion {
     TECNICO_ELIMINADO,    
     UNIDAD_CREADO,
     UNIDAD_EDITADO,
-    UNIDAD_ELIMINADO,    
+    UNIDAD_ELIMINADO,
+    CLIENTE_CREADO
 }

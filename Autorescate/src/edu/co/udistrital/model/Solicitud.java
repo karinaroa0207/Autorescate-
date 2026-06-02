@@ -2,12 +2,14 @@ package edu.co.udistrital.model;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.UUID;
 
 public class Solicitud implements MiComparable<Solicitud> {
 
+    private static int consecutivo = 1;
+
     private String id;
-    private String cliente;
+    private Cliente cliente;
+    private String clienteTexto;
     private String descripcion;
     private String zona;
     private String tipoServicio;
@@ -16,6 +18,7 @@ public class Solicitud implements MiComparable<Solicitud> {
     private EstadoSolicitud estado;
     private Unidad unidadAsignada;
     private Tecnico tecnicoAsignado;
+    private Kit kitAsignado;
     private LocalDateTime fechaRegistro;
     private LocalDateTime fechaCierre;
 
@@ -24,8 +27,17 @@ public class Solicitud implements MiComparable<Solicitud> {
     }
 
     public Solicitud(String cliente, String descripcion, String zona, String tipoServicio, int prioridad) {
-        this.id = UUID.randomUUID().toString();
+        this(null, cliente, descripcion, zona, tipoServicio, prioridad);
+    }
+
+    public Solicitud(Cliente cliente, String descripcion, String zona, String tipoServicio, int prioridad) {
+        this(cliente, null, descripcion, zona, tipoServicio, prioridad);
+    }
+
+    private Solicitud(Cliente cliente, String clienteTexto, String descripcion, String zona, String tipoServicio, int prioridad) {
+        this.id = String.format("SOL-%03d", consecutivo++);
         this.cliente = cliente;
+        this.clienteTexto = clienteTexto;
         this.descripcion = descripcion;
         this.zona = zona;
         this.tipoServicio = tipoServicio;
@@ -40,6 +52,13 @@ public class Solicitud implements MiComparable<Solicitud> {
     }
 
     public String getCliente() {
+        if (cliente != null) {
+            return cliente.toString();
+        }
+        return clienteTexto;
+    }
+
+    public Cliente getClienteObjeto() {
         return cliente;
     }
 
@@ -84,17 +103,22 @@ public class Solicitud implements MiComparable<Solicitud> {
     }
 
     public Kit getKit() {
-        return tecnicoAsignado.getKit();
+        return kitAsignado;
     }
 
     public void asignarRecursos(Unidad unidad, Tecnico tecnico) {
+        asignarRecursos(unidad, tecnico, tecnico != null ? tecnico.getKit() : null);
+    }
+
+    public void asignarRecursos(Unidad unidad, Tecnico tecnico, Kit kit) {
         this.unidadAsignada = unidad;
         this.tecnicoAsignado = tecnico;
+        this.kitAsignado = kit;
         this.estado = EstadoSolicitud.EN_PROCESO;
     }
 
     public void marcarComoAtendida() {
-        if (unidadAsignada == null || tecnicoAsignado == null) {
+        if (unidadAsignada == null || tecnicoAsignado == null || kitAsignado == null) {
             return;
         }
         tecnicoAsignado.setLibre(true);
@@ -106,6 +130,7 @@ public class Solicitud implements MiComparable<Solicitud> {
     public void revertirAsignacion() {
         this.unidadAsignada = null;
         this.tecnicoAsignado = null;
+        this.kitAsignado = null;
         this.estado = EstadoSolicitud.PENDIENTE;
         this.fechaCierre = null;
     }
@@ -123,9 +148,10 @@ public class Solicitud implements MiComparable<Solicitud> {
     public String[] toRowEjecucion() {
         return new String[]{
             String.valueOf(id),
-            cliente != null ? cliente : "",
+            getCliente() != null ? getCliente() : "",
             unidadAsignada != null ? unidadAsignada.getTipo().getDescripcion() : "Sin asignar",
             tecnicoAsignado != null ? tecnicoAsignado.getNombre() : "Sin asignar",
+            kitAsignado != null ? kitAsignado.getCodigo() : "Sin kit",
             estado != null ? estado.toString() : ""
         };
     }
@@ -133,7 +159,7 @@ public class Solicitud implements MiComparable<Solicitud> {
     public String[] toRowPendiente() {
         return new String[]{
             String.valueOf(id),
-            cliente != null ? cliente : "",
+            getCliente() != null ? getCliente() : "",
             tipoServicio != null ? tipoServicio : "",
             zona != null ? zona : "",
             String.valueOf(prioridad),
@@ -144,10 +170,11 @@ public class Solicitud implements MiComparable<Solicitud> {
     public String[] toRowCierre() {
         return new String[]{
             String.valueOf(id),
-            cliente != null ? cliente : "",
+            getCliente() != null ? getCliente() : "",
             tipoServicio != null ? tipoServicio : "",
             unidadAsignada != null ? unidadAsignada.getTipo().getDescripcion() : "Ninguna",
             tecnicoAsignado != null ? tecnicoAsignado.getNombre() : "No asignado",
+            kitAsignado != null ? kitAsignado.getCodigo() : "Sin kit",
             fechaCierre != null ? fechaCierre.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) : ""
         };
     }
@@ -155,13 +182,27 @@ public class Solicitud implements MiComparable<Solicitud> {
     public String[] toCSVRow() {
         return new String[]{
             String.valueOf(id),
-            cliente != null ? cliente : "",
+            cliente != null ? cliente.getDocumento() : "",
+            cliente != null ? cliente.getNombre() : getCliente() != null ? getCliente() : "",
+            cliente != null ? cliente.getTelefono() : "",
+            cliente != null ? cliente.getPlacaVehiculo() : "",
+            cliente != null ? cliente.getModeloVehiculo() : "",
             descripcion != null ? descripcion : "",
             tipoServicio != null ? tipoServicio : "",
             zona != null ? zona : "",
             String.valueOf(prioridad),
-            unidadAsignada != null ? unidadAsignada.getTipo().getDescripcion() : "Ninguna",
-            tecnicoAsignado != null ? tecnicoAsignado.getNombre() : "No asignado",
+            esCritica ? "Si" : "No",
+            estado != null ? estado.toString() : "",
+            unidadAsignada != null ? unidadAsignada.getId() : "",
+            unidadAsignada != null ? unidadAsignada.getTipo().getDescripcion() : "",
+            unidadAsignada != null ? unidadAsignada.getZona() : "",
+            tecnicoAsignado != null ? tecnicoAsignado.getIdentificacion() : "",
+            tecnicoAsignado != null ? tecnicoAsignado.getNombre() : "",
+            tecnicoAsignado != null ? tecnicoAsignado.getEspecialidad() : "",
+            tecnicoAsignado != null ? tecnicoAsignado.getZona() : "",
+            kitAsignado != null ? kitAsignado.getCodigo() : "Sin kit",
+            kitAsignado != null ? kitAsignado.getDescripcion() : "",
+            fechaRegistro != null ? fechaRegistro.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) : "",
             fechaCierre != null ? fechaCierre.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) : "" // Cambiado para que coincida con el formato visual
         };
     }

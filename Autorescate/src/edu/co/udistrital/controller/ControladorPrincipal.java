@@ -1,7 +1,9 @@
 package edu.co.udistrital.controller;
 
 import edu.co.udistrital.model.CentroOperaciones;
+import edu.co.udistrital.model.Cliente;
 import edu.co.udistrital.model.ExportadorCSV;
+import edu.co.udistrital.model.GestorCliente;
 import edu.co.udistrital.model.GestorKits;
 import edu.co.udistrital.model.GestorSolicitudes;
 import edu.co.udistrital.model.GestorTecnico;
@@ -29,16 +31,19 @@ public class ControladorPrincipal {
     private ControlTecnico cTecnico;
     private ControlSolicitudes cSolicitudes;
     private ControlUnidades cUnidades;
+    private ControlClientes cClientes;
 
     public ControladorPrincipal() {
         GestorKits gkits = new GestorKits();
         GestorTecnico gTec = new GestorTecnico();
         GestorSolicitudes gSol = new GestorSolicitudes();
         GestorUnidad gUni = new GestorUnidad();
+        GestorCliente gClientes = new GestorCliente();
 
-        this.modelo = new CentroOperaciones(gkits, gTec, gSol, gUni);
+        this.modelo = new CentroOperaciones(gkits, gTec, gSol, gUni, gClientes);
         this.vista = new VentanaPrincipal();
 
+        this.cClientes = new ControlClientes(vista.getPanelClientes(), vista.getPanelSolicitudes(), modelo, vista);
         this.cInventario = new ControlInventario(vista.getPanelKits(), modelo, vista);
         this.cTecnico = new ControlTecnico(vista.getPanelTecnicos(), modelo, vista);
         this.cSolicitudes = new ControlSolicitudes(vista.getPanelSolicitudes(), modelo, vista);
@@ -56,15 +61,18 @@ public class ControladorPrincipal {
                     cSolicitudes.actualizarRecursos();
                     break;
                 case 1:
-                    cUnidades.actualizarTabla();
+                    cClientes.actualizarTabla();
                     break;
                 case 2:
-                    cTecnico.actualizarTabla();
+                    cUnidades.actualizarTabla();
                     break;
                 case 3:
-                    cInventario.actualizarTabla();
+                    cTecnico.actualizarTabla();
                     break;
                 case 4:
+                    cInventario.actualizarTabla();
+                    break;
+                case 5:
                     llenarHistorial();
                     break;
                 default:
@@ -89,8 +97,13 @@ public class ControladorPrincipal {
         modelo.agregarTecnico(new Tecnico("102", "Andrea Rojas", "Electrica", "Centro"));
         modelo.agregarTecnico(new Tecnico("103", "Carlos Mena", "Grua", "Sur"));
 
-        modelo.registrarSolicitud(new Solicitud("Cliente particular", "Bateria descargada en parqueadero", "Centro", "Paso de corriente", 0));
-        modelo.registrarSolicitud(new Solicitud("Aseguradora Andina", "Bus averiado con pasajeros en carretera", "Norte", "Grua", 95));
+        Cliente clienteParticular = new Cliente("9001", "Cliente particular", "3001112233", "ABC123", "Automovil");
+        Cliente aseguradora = new Cliente("800123", "Aseguradora Andina", "6015550101", "BUS777", "Bus intermunicipal");
+        modelo.registrarCliente(clienteParticular);
+        modelo.registrarCliente(aseguradora);
+
+        modelo.registrarSolicitud(new Solicitud(clienteParticular, "Bateria descargada en parqueadero", "Centro", "Paso de corriente", 0));
+        modelo.registrarSolicitud(new Solicitud(aseguradora, "Bus averiado con pasajeros en carretera", "Norte", "Grua", 95));
         modelo.agregarKit(new Kit("KIT-001", "Herramientas"));
         modelo.agregarKit(new Kit("KIT-002", "Llantas"));
         vista.agregarMensaje("Sistema inicializado con datos de prueba.");
@@ -115,6 +128,8 @@ public class ControladorPrincipal {
         cSolicitudes.actualizarPendientes();
         cSolicitudes.actualizarEjecucion();
         cSolicitudes.actualizarCerrados();
+        cClientes.actualizarTabla();
+        cClientes.actualizarSelectorSolicitudes();
         cInventario.actualizarTabla();
         cTecnico.actualizarTabla();
         cSolicitudes.actualizarRecursos();

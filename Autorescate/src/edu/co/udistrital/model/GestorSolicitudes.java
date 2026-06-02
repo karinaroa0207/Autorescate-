@@ -20,8 +20,8 @@ public class GestorSolicitudes {
         return pendientes.desencolar();
     }
 
-    public void agregarEnEjecucion(Solicitud solicitud, Unidad unidad, Tecnico tecnico) {
-        solicitud.asignarRecursos(unidad, tecnico);
+    public void agregarEnEjecucion(Solicitud solicitud, Unidad unidad, Tecnico tecnico, Kit kit) {
+        solicitud.asignarRecursos(unidad, tecnico, kit);
     }
 
     public void cerrar(Solicitud solicitud) {

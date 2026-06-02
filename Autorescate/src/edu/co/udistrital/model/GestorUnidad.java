@@ -23,6 +23,18 @@ public class GestorUnidad {
         return null;
     }
 
+    public Unidad buscarUnidadDisponibleEnZona(String zona) {
+        Nodo<Unidad> actualUnidad = unidades.getCabeza();
+        while (actualUnidad != null) {
+            Unidad unidad = actualUnidad.getDato();
+            if (unidad.puedeAsignarse() && zonaCoincide(unidad.getZona(), zona)) {
+                return unidad;
+            }
+            actualUnidad = actualUnidad.getSiguiente();
+        }
+        return null;
+    }
+
     public Lista<Unidad> obtenerTodas() {
         Lista<Unidad> lista = new ArregloLista<>();
         Nodo<Unidad> actual = unidades.getCabeza();
@@ -39,6 +51,19 @@ public class GestorUnidad {
         while (actual != null) {
             if (actual.getDato().puedeAsignarse()) {
                 lista.add(actual.getDato());
+            }
+            actual = actual.getSiguiente();
+        }
+        return lista;
+    }
+
+    public Lista<Unidad> obtenerDisponiblesPorZona(String zona) {
+        Lista<Unidad> lista = new ArregloLista<>();
+        Nodo<Unidad> actual = unidades.getCabeza();
+        while (actual != null) {
+            Unidad unidad = actual.getDato();
+            if (unidad.puedeAsignarse() && zonaCoincide(unidad.getZona(), zona)) {
+                lista.add(unidad);
             }
             actual = actual.getSiguiente();
         }
@@ -77,5 +102,12 @@ public class GestorUnidad {
                 return dato.getId().equals(id);
             }
         });
+    }
+
+    private boolean zonaCoincide(String zonaRecurso, String zonaSolicitud) {
+        if (zonaRecurso == null || zonaSolicitud == null) {
+            return false;
+        }
+        return zonaRecurso.trim().equalsIgnoreCase(zonaSolicitud.trim());
     }
 }
