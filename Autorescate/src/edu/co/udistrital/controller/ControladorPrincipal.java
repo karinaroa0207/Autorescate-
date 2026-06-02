@@ -16,6 +16,7 @@ import edu.co.udistrital.view.VentanaPrincipal;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 
 public class ControladorPrincipal {
 
@@ -123,7 +124,7 @@ public class ControladorPrincipal {
     }
 
     private void generarCSV() {
-        try (FileWriter writer = new FileWriter("reporte_cierre.csv", StandardCharsets.UTF_8)) {
+        try (FileWriter writer = new FileWriter("reporte_cierre_"+LocalDateTime.now()+".csv", StandardCharsets.UTF_8)) {
             writer.append("ID_Caso,Cliente,Descripcion,Servicio,Zona,Prioridad,Unidad,Tecnico,Fecha_Cierre\n");
             Lista<Solicitud> casos = modelo.getCasosCerrados();
             for (int i = 0; i < casos.size(); i++) {
