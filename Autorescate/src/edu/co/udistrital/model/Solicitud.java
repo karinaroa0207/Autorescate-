@@ -5,7 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 public class Solicitud implements MiComparable<Solicitud> {
-    
+
     private String id;
     private String cliente;
     private String descripcion;
@@ -35,20 +35,58 @@ public class Solicitud implements MiComparable<Solicitud> {
         this.fechaRegistro = LocalDateTime.now();
     }
 
-    public String getId() { return id; }
-    public String getCliente() { return cliente; }
-    public String getDescripcion() { return descripcion; }
-    public String getZona() { return zona; }
-    public String getTipoServicio() { return tipoServicio; }
-    public int getPrioridad() { return prioridad; }
-    public boolean isEsCritica() { return esCritica; }
-    public EstadoSolicitud getEstado() { return estado; }
-    public Unidad getUnidadAsignada() { return unidadAsignada; }
-    public Tecnico getTecnicoAsignado() { return tecnicoAsignado; }
-    public LocalDateTime getFechaRegistro() { return fechaRegistro; }
-    public LocalDateTime getFechaCierre() { return fechaCierre; }
-    public Kit getKit() { return tecnicoAsignado.getKit(); }
-    
+    public String getId() {
+        return id;
+    }
+
+    public String getCliente() {
+        return cliente;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public String getZona() {
+        return zona;
+    }
+
+    public String getTipoServicio() {
+        return tipoServicio;
+    }
+
+    public int getPrioridad() {
+        return prioridad;
+    }
+
+    public boolean isEsCritica() {
+        return esCritica;
+    }
+
+    public EstadoSolicitud getEstado() {
+        return estado;
+    }
+
+    public Unidad getUnidadAsignada() {
+        return unidadAsignada;
+    }
+
+    public Tecnico getTecnicoAsignado() {
+        return tecnicoAsignado;
+    }
+
+    public LocalDateTime getFechaRegistro() {
+        return fechaRegistro;
+    }
+
+    public LocalDateTime getFechaCierre() {
+        return fechaCierre;
+    }
+
+    public Kit getKit() {
+        return tecnicoAsignado.getKit();
+    }
+
     public void asignarRecursos(Unidad unidad, Tecnico tecnico) {
         this.unidadAsignada = unidad;
         this.tecnicoAsignado = tecnico;
@@ -81,37 +119,50 @@ public class Solicitud implements MiComparable<Solicitud> {
         }
         return 0;
     }
-    
+
     public Object[] toRowEjecucion() {
         return new Object[]{
-            id, 
-            cliente, 
-            (unidadAsignada != null) ? unidadAsignada.getTipo() : "Sin asignar", 
-            (tecnicoAsignado != null) ? tecnicoAsignado.getNombre() : "Sin asignar", 
+            id,
+            cliente,
+            (unidadAsignada != null) ? unidadAsignada.getTipo() : "Sin asignar",
+            (tecnicoAsignado != null) ? tecnicoAsignado.getNombre() : "Sin asignar",
             estado
         };
     }
-    
+
     public Object[] toRowPendiente() {
         return new Object[]{
-            id, 
+            id,
             cliente,
-            tipoServicio, 
-            zona, 
-            prioridad, 
+            tipoServicio,
+            zona,
+            prioridad,
             estado
         };
     }
-    
+
     public Object[] toRowCierre() {
         return new Object[]{
-            id, 
-            cliente, 
-            tipoServicio, 
+            id,
+            cliente,
+            tipoServicio,
             unidadAsignada.getTipo(),
             tecnicoAsignado.getNombre(),
             fechaCierre.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))
         };
     }
-    
+
+    public String[] toCSVRow() {
+        return new String[]{
+            String.valueOf(this.id),
+            this.cliente,
+            this.descripcion,
+            this.tipoServicio,
+            this.zona,
+            String.valueOf(this.prioridad),
+            this.unidadAsignada != null ? this.unidadAsignada.getTipo() : "Ninguna",
+            this.tecnicoAsignado != null ? this.tecnicoAsignado.getNombre() : "No asignado",
+            this.fechaCierre != null ? this.fechaCierre.toString() : ""
+        };
+    }
 }

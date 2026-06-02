@@ -1,6 +1,7 @@
 package edu.co.udistrital.controller;
 
 import edu.co.udistrital.model.CentroOperaciones;
+import edu.co.udistrital.model.ExportadorCSV;
 import edu.co.udistrital.model.GestorKits;
 import edu.co.udistrital.model.GestorSolicitudes;
 import edu.co.udistrital.model.GestorTecnico;
@@ -12,6 +13,8 @@ import edu.co.udistrital.model.Solicitud;
 import edu.co.udistrital.model.Tecnico;
 import edu.co.udistrital.model.UnidadFactory;
 import edu.co.udistrital.view.VentanaPrincipal;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -35,7 +38,7 @@ public class ControladorPrincipal {
 
         this.modelo = new CentroOperaciones(gkits, gTec, gSol, gUni);
         this.vista = new VentanaPrincipal();
-        
+
         this.cInventario = new ControlInventario(vista.getPanelKits(), modelo, vista);
         this.cTecnico = new ControlTecnico(vista.getPanelTecnicos(), modelo, vista);
         this.cSolicitudes = new ControlSolicitudes(vista.getPanelSolicitudes(), modelo, vista);
@@ -68,13 +71,19 @@ public class ControladorPrincipal {
                     break;
             }
         });
+        vista.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                generarCSV();
+            }
+        });
     }
 
     private void inicializarDatosPrueba() {
-        modelo.agregarUnidad(UnidadFactory.crearUnidad("Grua","Norte"));
-        modelo.agregarUnidad(UnidadFactory.crearUnidad("Moto de apoyo","Centro"));
-        modelo.agregarUnidad(UnidadFactory.crearUnidad("Camioneta","Sur"));
-        modelo.agregarUnidad(UnidadFactory.crearUnidad("VehiculoLiviano","Occidente"));
+        modelo.agregarUnidad(UnidadFactory.crearUnidad("Grua", "Norte"));
+        modelo.agregarUnidad(UnidadFactory.crearUnidad("Moto de apoyo", "Centro"));
+        modelo.agregarUnidad(UnidadFactory.crearUnidad("Camioneta", "Sur"));
+        modelo.agregarUnidad(UnidadFactory.crearUnidad("VehiculoLiviano", "Occidente"));
 
         modelo.agregarTecnico(new Tecnico("101", "Helio Ramirez", "Mecanica", "Norte"));
         modelo.agregarTecnico(new Tecnico("102", "Andrea Rojas", "Electrica", "Centro"));
@@ -82,8 +91,8 @@ public class ControladorPrincipal {
 
         modelo.registrarSolicitud(new Solicitud("Cliente particular", "Bateria descargada en parqueadero", "Centro", "Paso de corriente", 0));
         modelo.registrarSolicitud(new Solicitud("Aseguradora Andina", "Bus averiado con pasajeros en carretera", "Norte", "Grua", 95));
-        modelo.agregarKit(new Kit("KIT-001","Herramientas"));
-        modelo.agregarKit(new Kit("KIT-002","Llantas"));
+        modelo.agregarKit(new Kit("KIT-001", "Herramientas"));
+        modelo.agregarKit(new Kit("KIT-002", "Llantas"));
         vista.agregarMensaje("Sistema inicializado con datos de prueba.");
     }
 
@@ -113,46 +122,22 @@ public class ControladorPrincipal {
         llenarHistorial();
     }
 
-
     private void llenarHistorial() {
         vista.limpiarTabla(vista.getTablaHistorial());
         Lista<Operacion> lista = modelo.getHistorial();
         for (int i = 0; i < lista.size(); i++) {
             Operacion actual = lista.get(i);
-            vista.agregarFila(vista.getTablaHistorial(), actual.toRow(i+1));
+            vista.agregarFila(vista.getTablaHistorial(), actual.toRow(i + 1));
         }
     }
 
     private void generarCSV() {
-        try (FileWriter writer = new FileWriter("reporte_cierre_"+LocalDateTime.now()+".csv", StandardCharsets.UTF_8)) {
-            writer.append("ID_Caso,Cliente,Descripcion,Servicio,Zona,Prioridad,Unidad,Tecnico,Fecha_Cierre\n");
+        try {
             Lista<Solicitud> casos = modelo.getCasosCerrados();
-            for (int i = 0; i < casos.size(); i++) {
-                Solicitud s = casos.get(i);
-                writer.append(s.getId() + ",");
-                writer.append(csv(s.getCliente()) + ",");
-                writer.append(csv(s.getDescripcion()) + ",");
-                writer.append(csv(s.getTipoServicio()) + ",");
-                writer.append(csv(s.getZona()) + ",");
-                writer.append(s.getPrioridad() + ",");
-                writer.append(csv(s.getUnidadAsignada().getTipo()) + ",");
-                writer.append(csv(s.getTecnicoAsignado().getNombre()) + ",");
-                writer.append(csv(String.valueOf(s.getFechaCierre())) + "\n");
-            }
-            vista.agregarMensaje("Archivo reporte_cierre.csv generado en la raiz del proyecto.");
+            ExportadorCSV.generarReporteCasosCerrados(casos);
+            vista.agregarMensaje("Archivo reporte generado con éxito en la raíz del proyecto.");
         } catch (IOException ex) {
             vista.agregarMensaje("Error al escribir el archivo CSV: " + ex.getMessage());
         }
     }
-
-    private String csv(String valor) {
-        if (valor == null) {
-            return "";
-        }
-        String limpio = valor.replace("\"", "\"\"");
-        if (limpio.indexOf(',') >= 0 || limpio.indexOf('"') >= 0 || limpio.indexOf('\n') >= 0) {
-            return "\"" + limpio + "\"";
-        }
-        return limpio;
-    }    
 }
