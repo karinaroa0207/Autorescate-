@@ -7,13 +7,15 @@ public class CentroOperaciones {
     private GestorTecnico gTecs;
     private GestorSolicitudes gSol;
     private GestorUnidad gUni;
+    private GestorCliente gClientes;
 
-    public CentroOperaciones(GestorKits gKits, GestorTecnico gTecs, GestorSolicitudes gSol, GestorUnidad gUni) {
+    public CentroOperaciones(GestorKits gKits, GestorTecnico gTecs, GestorSolicitudes gSol, GestorUnidad gUni, GestorCliente gCli) {
         this.historial = new Pila<>();
         this.gKits = gKits;
         this.gTecs = gTecs;
         this.gSol = gSol;
         this.gUni = gUni;
+        this.gClientes = gCli;
     }
 
     public void agregarUnidad(Unidad u) {
@@ -267,6 +269,27 @@ public class CentroOperaciones {
                     actual.setZona(anterior.getZona());
                     return true;
                 }
+                case CLIENTE_CREADO: {
+                    gClientes.eliminarCliente(((Cliente) ultimaOp.getEstadoAnterior()).getId());
+                    return true;
+                }
+                case CLIENTE_EDITADO: {
+                    Cliente anterior = (Cliente) ultimaOp.getEstadoAnterior();
+                    Cliente actual = (Cliente) ultimaOp.getEstadoActual();
+                    gClientes.modificarCliente(
+                            actual.getId(), 
+                            anterior.getDocumento(), 
+                            anterior.getNombre(), 
+                            anterior.getTelefono(), 
+                            anterior.getPlacaVehiculo(), 
+                            anterior.getModeloVehiculo()
+                    );
+                    return true;
+                }
+                case CLIENTE_ELIMINADO: {
+                    gClientes.agregarCliente((Cliente) ultimaOp.getEstadoAnterior());
+                    return true;
+                }
                 default:
                     break;
             }
@@ -374,4 +397,65 @@ public class CentroOperaciones {
     public Lista<Tecnico> obtenerTodosLosTecnicos() {
         return gTecs.obtenerTodos();
     }
+
+    public void agregarCliente(Cliente cliente) {
+        gClientes.agregarCliente(cliente);
+        historial.apilar(
+                new Operacion(
+                        TipoOperacion.CLIENTE_CREADO,
+                        "Cliente " + cliente.getNombre() + " registrado",
+                        cliente
+                )
+        );
+    }
+
+    public Lista<Cliente> obtenerClientes() {
+        return gClientes.obtenerTodos();
+    }
+
+    public Cliente buscarClientePorId(String id) {
+        return gClientes.buscarPorId(id);
+    }
+
+    public Cliente buscarClientePorDocumento(String documento) {
+        return gClientes.buscarPorDocumento(documento);
+    }
+
+    public Cliente modificarCliente(String id, String documento, String nombre, String telefono, String placa, String modelo) {
+        Cliente anterior = gClientes.buscarPorId(id);
+        if (anterior == null) {
+            return null;
+        }
+        Cliente modificado = gClientes.modificarCliente(id, documento, nombre, telefono, placa, modelo);
+        if (modificado != null) {
+            historial.apilar(
+                    new Operacion(
+                            TipoOperacion.CLIENTE_EDITADO,
+                            "Cliente " + nombre + " modificado",
+                            anterior,
+                            modificado
+                    )
+            );
+        }
+        return modificado;
+    }
+
+    public boolean eliminarCliente(String id) {
+        Cliente cliente = gClientes.buscarPorId(id);
+        if (cliente == null) {
+            return false;
+        }
+        boolean exito = gClientes.eliminarCliente(id);
+        if (exito) {
+            historial.apilar(
+                    new Operacion(
+                            TipoOperacion.CLIENTE_ELIMINADO,
+                            "Cliente " + cliente.getNombre() + " eliminado",
+                            cliente
+                    )
+            );
+        }
+        return exito;
+    }
 }
+

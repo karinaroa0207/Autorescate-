@@ -2,6 +2,7 @@ package edu.co.udistrital.controller;
 
 import edu.co.udistrital.model.CentroOperaciones;
 import edu.co.udistrital.model.ExportadorCSV;
+import edu.co.udistrital.model.GestorCliente;
 import edu.co.udistrital.model.GestorKits;
 import edu.co.udistrital.model.GestorSolicitudes;
 import edu.co.udistrital.model.GestorTecnico;
@@ -15,11 +16,7 @@ import edu.co.udistrital.model.UnidadFactory;
 import edu.co.udistrital.view.VentanaPrincipal;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
-import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
 
 public class ControladorPrincipal {
 
@@ -29,20 +26,23 @@ public class ControladorPrincipal {
     private ControlTecnico cTecnico;
     private ControlSolicitudes cSolicitudes;
     private ControlUnidades cUnidades;
+    private ControlClientes cClientes;
 
     public ControladorPrincipal() {
         GestorKits gkits = new GestorKits();
         GestorTecnico gTec = new GestorTecnico();
         GestorSolicitudes gSol = new GestorSolicitudes();
         GestorUnidad gUni = new GestorUnidad();
+        GestorCliente gCli = new GestorCliente();
 
-        this.modelo = new CentroOperaciones(gkits, gTec, gSol, gUni);
+        this.modelo = new CentroOperaciones(gkits, gTec, gSol, gUni, gCli);
         this.vista = new VentanaPrincipal();
 
         this.cInventario = new ControlInventario(vista.getPanelKits(), modelo, vista);
         this.cTecnico = new ControlTecnico(vista.getPanelTecnicos(), modelo, vista);
         this.cSolicitudes = new ControlSolicitudes(vista.getPanelSolicitudes(), modelo, vista);
         this.cUnidades = new ControlUnidades(vista.getPanelRecursos(), modelo, vista);
+        this.cClientes = new ControlClientes(vista.getPanelClientes(), modelo, vista);
         inicializarDatosPrueba();
         inicializarEventos();
         actualizarVistas();
@@ -65,6 +65,9 @@ public class ControladorPrincipal {
                     cInventario.actualizarTabla();
                     break;
                 case 4:
+                    cClientes.actualizarTabla();
+                    break;
+                case 5:
                     llenarHistorial();
                     break;
                 default:
@@ -119,6 +122,7 @@ public class ControladorPrincipal {
         cTecnico.actualizarTabla();
         cSolicitudes.actualizarRecursos();
         cUnidades.actualizarTabla();
+        cClientes.actualizarTabla();
         llenarHistorial();
     }
 

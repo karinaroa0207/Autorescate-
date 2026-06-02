@@ -25,6 +25,7 @@ public class VentanaPrincipal extends JFrame implements VisualizadorMensajes{
     private PanelTecnicos panelTecnicos;
     private PanelKits panelKits;
     private PanelHistorial panelHistorial;
+    private PanelClientes panelClientes;
     private JButton btnDeshacer;
     private JButton btnExportar;
     private JButton btnActualizar;
@@ -43,6 +44,7 @@ public class VentanaPrincipal extends JFrame implements VisualizadorMensajes{
         panelTecnicos = new PanelTecnicos();
         panelKits = new PanelKits();
         panelHistorial = new PanelHistorial();
+        panelClientes = new PanelClientes();
 
         add(crearEncabezado(), BorderLayout.NORTH);
         add(crearPestanas(), BorderLayout.CENTER);
@@ -74,6 +76,7 @@ public class VentanaPrincipal extends JFrame implements VisualizadorMensajes{
         tabs.addTab("Unidades", panelRecursos);
         tabs.addTab("Tecnicos", panelTecnicos);
         tabs.addTab("Kits", panelKits);
+        tabs.addTab("Clientes", panelClientes);
         tabs.addTab("Historial", panelHistorial);
         return tabs;
     }
@@ -116,6 +119,7 @@ public class VentanaPrincipal extends JFrame implements VisualizadorMensajes{
     public JTable getTablaCerrados() { return panelSolicitudes.getTablaCerrados(); }
     public JTable getTablaUnidades() { return panelRecursos.getTablaUnidades(); }
     public JTable getTablaTecnicos() { return panelTecnicos.getTablaTecnicos(); }
+    public JTable getTablaClientes() { return panelClientes.getTablaClientes(); }
     public JTable getTablaKits() { return panelKits.getTablaKits(); }
     public JTable getTablaHistorial() { return panelHistorial.getTablaHistorial(); }
 
@@ -177,6 +181,10 @@ public class VentanaPrincipal extends JFrame implements VisualizadorMensajes{
 
     public PanelHistorial getPanelHistorial() {
         return panelHistorial;
+    }
+
+    public PanelClientes getPanelClientes() {
+        return panelClientes;
     }
 
     public JTabbedPane getTabs() {

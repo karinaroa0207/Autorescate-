@@ -45,7 +45,7 @@ public class ControlUnidades {
             if(gestor.modificarUnidad(vista.getIdUnidad(), zona, EstadoUnidad.valueOf(estado))) {
                 vista.limpiarFormularioUnidades();
                 vMensajes.mostrarMensaje("Unidad tipo " + tipo + " actualizada.", "Info");                                
-            }                       
+            }                  
         }        
         vista.modoRegistro();
         modoRegistro = true;
