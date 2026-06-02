@@ -19,7 +19,7 @@ public class ControlUnidades {
         this.vista = vista;
         this.gestor = gestor;
         this.vMensajes = vMensajes;
-        modoRegistro = false;
+        modoRegistro = true;
         vista.getBtnRegistrarUnidad().addActionListener(e -> guardarUnidad());
         vista.getBtnModificarUnidad().addActionListener(e -> cargarParaModificar());
         vista.getBtnEliminarUnidad().addActionListener(e -> eliminarSeleccionado());

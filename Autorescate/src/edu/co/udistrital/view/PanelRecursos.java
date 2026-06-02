@@ -92,7 +92,7 @@ public class PanelRecursos extends JPanel {
     }
     
     public String getIdUnidad() { return lblId.getText().trim(); }
-    public String getTipoUnidad() { return (String) cmbTipoUnidad.getSelectedItem(); }
+    public String getTipoUnidad() { return cmbTipoUnidad.getSelectedItem().toString(); }
     public String getZonaUnidad() { return txtZonaUnidad.getText().trim(); }
     public String getEstadoUnidad() { return (String) cmbEstadoUnidad.getSelectedItem(); }
 
