@@ -185,7 +185,11 @@ public class CentroOperaciones {
     }
 
     public boolean modificarUnidad(String id, String nuevaZona, EstadoUnidad nuevoEstado) {
-        Unidad anterior = gUni.buscarPorId(id).clonar();        
+        Unidad anterior = gUni.buscarPorId(id);      
+        if (anterior == null) {
+            return false;
+        }
+        anterior = anterior.clonar();
         Unidad exito = gUni.modificarUnidad(id, nuevaZona, nuevoEstado);
         if (exito != null) {
             historial.apilar(

@@ -19,7 +19,7 @@ public class Grua extends Unidad {
     }
 
     @Override
-    public Unidad clonar() {
+    public Unidad crearCopiaBase() {
         return new Grua(this.getZona(), capacidadToneladas);
     }
 }

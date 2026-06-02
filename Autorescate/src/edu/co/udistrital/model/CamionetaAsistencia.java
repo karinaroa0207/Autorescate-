@@ -19,7 +19,7 @@ public class CamionetaAsistencia extends Unidad {
     }
 
     @Override
-    public Unidad clonar() {
+    public Unidad crearCopiaBase() {
         return new CamionetaAsistencia(this.getZona(), tienePlantaElectrica);
     }
 }

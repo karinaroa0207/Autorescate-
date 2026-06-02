@@ -19,7 +19,7 @@ public class VehiculoLiviano extends Unidad {
     }
 
     @Override
-    public Unidad clonar() {
+    public Unidad crearCopiaBase() {
         return new VehiculoLiviano(this.getZona(), capacidadPasajeros);
     }
 }

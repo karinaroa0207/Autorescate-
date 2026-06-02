@@ -18,7 +18,7 @@ public class MotoApoyo extends Unidad {
     }
 
     @Override
-    public Unidad clonar() {
+    public Unidad crearCopiaBase() {
         return new MotoApoyo(this.getZona(), tieneCajaHerramientas);
     }
 }

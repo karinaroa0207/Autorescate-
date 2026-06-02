@@ -8,7 +8,6 @@ public abstract class Unidad implements Clonable<Unidad> {
     private EstadoUnidad estado;
     private String zona;
     private boolean disponible;
-    
 
     public Unidad(String zona) {
         this.id = UUID.randomUUID().toString();
@@ -81,4 +80,18 @@ public abstract class Unidad implements Clonable<Unidad> {
             puedeAsignarse() ? "Si" : "No"
         };
     }
+
+    @Override
+    public Unidad clonar() {
+        Unidad copia = crearCopiaBase();
+
+        copia.id = id;
+        copia.estado = estado;
+        copia.zona = zona;
+        copia.disponible = disponible;
+
+        return copia;
+    }
+    
+    protected abstract Unidad crearCopiaBase();
 }
