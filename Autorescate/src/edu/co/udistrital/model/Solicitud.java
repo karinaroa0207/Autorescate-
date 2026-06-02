@@ -124,7 +124,7 @@ public class Solicitud implements MiComparable<Solicitud> {
         return new String[]{
             String.valueOf(id),
             cliente != null ? cliente : "",
-            unidadAsignada != null ? unidadAsignada.getTipo() : "Sin asignar",
+            unidadAsignada != null ? unidadAsignada.getTipo().getDescripcion() : "Sin asignar",
             tecnicoAsignado != null ? tecnicoAsignado.getNombre() : "Sin asignar",
             estado != null ? estado.toString() : ""
         };
@@ -146,7 +146,7 @@ public class Solicitud implements MiComparable<Solicitud> {
             String.valueOf(id),
             cliente != null ? cliente : "",
             tipoServicio != null ? tipoServicio : "",
-            unidadAsignada != null ? unidadAsignada.getTipo() : "Ninguna",
+            unidadAsignada != null ? unidadAsignada.getTipo().getDescripcion() : "Ninguna",
             tecnicoAsignado != null ? tecnicoAsignado.getNombre() : "No asignado",
             fechaCierre != null ? fechaCierre.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) : ""
         };
@@ -160,7 +160,7 @@ public class Solicitud implements MiComparable<Solicitud> {
             tipoServicio != null ? tipoServicio : "",
             zona != null ? zona : "",
             String.valueOf(prioridad),
-            unidadAsignada != null ? unidadAsignada.getTipo() : "Ninguna",
+            unidadAsignada != null ? unidadAsignada.getTipo().getDescripcion() : "Ninguna",
             tecnicoAsignado != null ? tecnicoAsignado.getNombre() : "No asignado",
             fechaCierre != null ? fechaCierre.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) : "" // Cambiado para que coincida con el formato visual
         };

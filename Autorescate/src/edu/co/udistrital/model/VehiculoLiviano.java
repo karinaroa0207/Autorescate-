@@ -10,8 +10,8 @@ public class VehiculoLiviano extends Unidad {
     }
 
     @Override
-    public String getTipo() {
-        return "Vehiculo liviano";
+    public TipoVehiculo getTipo() {
+        return TipoVehiculo.VEHICULO_LIVIANO;
     }
 
     public int getCapacidadPasajeros() {

@@ -8,6 +8,7 @@ public abstract class Unidad implements Clonable<Unidad> {
     private EstadoUnidad estado;
     private String zona;
     private boolean disponible;
+    
 
     public Unidad(String zona) {
         this.id = UUID.randomUUID().toString();
@@ -16,7 +17,7 @@ public abstract class Unidad implements Clonable<Unidad> {
         this.disponible = true;
     }
 
-    public abstract String getTipo();
+    public abstract TipoVehiculo getTipo();
 
     public String getId() {
         return id;
@@ -67,14 +68,14 @@ public abstract class Unidad implements Clonable<Unidad> {
         return new String[]{
             id != null ? String.valueOf(id) : "",
             zona != null ? zona : "",
-            getTipo() != null ? getTipo() : ""
+            getTipo() != null ? getTipo().getDescripcion() : ""
         };
     }
 
     public String[] toRow() {
         return new String[]{
             id != null ? String.valueOf(id) : "",
-            getTipo() != null ? getTipo() : "",
+            getTipo() != null ? getTipo().getDescripcion() : "",
             zona != null ? zona : "",
             estado != null ? estado.toString() : "",
             puedeAsignarse() ? "Si" : "No"

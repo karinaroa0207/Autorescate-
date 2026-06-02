@@ -10,8 +10,8 @@ public class Grua extends Unidad {
     }
 
     @Override
-    public String getTipo() {
-        return "Grua";
+    public TipoVehiculo getTipo() {
+        return TipoVehiculo.GRUA;
     }
 
     public double getCapacidadToneladas() {

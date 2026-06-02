@@ -1,6 +1,7 @@
 package edu.co.udistrital.view;
 
 import edu.co.udistrital.model.EstadoUnidad;
+import edu.co.udistrital.model.TipoVehiculo;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -13,7 +14,7 @@ import java.awt.FlowLayout;
 
 public class PanelRecursos extends JPanel {
 
-    private JComboBox<String> cmbTipoUnidad;
+    private JComboBox<TipoVehiculo> cmbTipoUnidad;
     private JTextField txtZonaUnidad;
     private JButton btnRegistrarUnidad;
     private JLabel lblId;
@@ -36,18 +37,15 @@ public class PanelRecursos extends JPanel {
     }
 
     private JPanel crearFormulario() {
-        // Contenedor principal del formulario con un borde de título
         JPanel panelPrincipal = new JPanel(new BorderLayout(5, 5));
         panelPrincipal.setBorder(javax.swing.BorderFactory.createTitledBorder("Gestión de Unidades"));
 
-        // Configuración del Label del ID (Estará arriba)
         lblId = new JLabel();
-        lblId.setVisible(false); // Oculto al inicio
+        lblId.setVisible(false);
 
-        // Panel interno para los campos y botones (Fila horizontal antigua)
         JPanel filaCampos = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
 
-        cmbTipoUnidad = new JComboBox<>(new String[]{"Grua", "Moto de apoyo", "Camioneta", "Vehiculo liviano"});
+        cmbTipoUnidad = new JComboBox<>(TipoVehiculo.values());
         txtZonaUnidad = new JTextField(14);
         cmbEstadoUnidad = new JComboBox<>(new String[]{EstadoUnidad.DISPONIBLE.toString(), EstadoUnidad.MANTENIMIENTO.toString(), EstadoUnidad.OCUPADA.toString()});
 
@@ -77,10 +75,8 @@ public class PanelRecursos extends JPanel {
     public void modoRegistro() {
         btnRegistrarUnidad.setText("Registrar unidad");
         lblId.setVisible(false);
-        lblId.setText(""); // Limpiamos el texto del ID
-        //cmbTipoUnidad.setEnabled(true);
-
-        // IMPORTANTE: Avisarle a Swing que el diseño cambió físicamente para que oculte el espacio vacío
+        lblId.setText("");
+        cmbTipoUnidad.setEnabled(true);
         revalidate();
         repaint();
     }
@@ -88,7 +84,7 @@ public class PanelRecursos extends JPanel {
     public void modoEdicion() {
         btnRegistrarUnidad.setText("Guardar Cambios");
         lblId.setVisible(true);
-        //cmbTipoUnidad.setEnabled(false);
+        cmbTipoUnidad.setEnabled(false);
         revalidate();
         repaint();
     }
@@ -100,7 +96,7 @@ public class PanelRecursos extends JPanel {
 
     public void setId(String id) { lblId.setText(id); }
     public void setZonaUnidad(String zona) { txtZonaUnidad.setText(zona); }
-    public void setTipoUnidad(String tipo) { cmbTipoUnidad.setSelectedItem(tipo); }
+    public void setTipoUnidad(TipoVehiculo tipo) { cmbTipoUnidad.setSelectedItem(tipo); }
     public void setEstadoUnidad(String estado) { cmbEstadoUnidad.setSelectedItem(estado); }
 
     public JButton getBtnRegistrarUnidad() { return btnRegistrarUnidad; }
@@ -108,12 +104,8 @@ public class PanelRecursos extends JPanel {
     public JButton getBtnEliminarUnidad() { return btnEliminarUnidad; }
     public JTable getTablaUnidades() { return tablaUnidades; }
     
-    // Permite al controlador bloquear la caja de texto del Tipo al editar
-    public JComboBox<String> getCmbTipoUnidad() { return cmbTipoUnidad; }
+    public JComboBox<TipoVehiculo> getCmbTipoUnidad() { return cmbTipoUnidad; }
 
-    /**
-     * Limpia los campos de texto y restablece los combos del formulario
-     */
     public void limpiarFormularioUnidades() {
         txtZonaUnidad.setText("");
         cmbTipoUnidad.setSelectedIndex(0);

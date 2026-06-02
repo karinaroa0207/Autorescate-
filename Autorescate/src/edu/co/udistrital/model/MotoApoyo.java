@@ -9,8 +9,8 @@ public class MotoApoyo extends Unidad {
     }
 
     @Override
-    public String getTipo() {
-        return "Moto de Apoyo";
+    public TipoVehiculo getTipo() {
+        return TipoVehiculo.MOTO_DE_APOYO;
     }
 
     public boolean isTieneCajaHerramientas() {

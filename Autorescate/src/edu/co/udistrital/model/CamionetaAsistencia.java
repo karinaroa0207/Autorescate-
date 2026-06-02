@@ -10,8 +10,8 @@ public class CamionetaAsistencia extends Unidad {
     }
 
     @Override
-    public String getTipo() {
-        return "Camioneta de Asistencia";
+    public TipoVehiculo getTipo() {
+        return TipoVehiculo.CAMIONETA;
     }
 
     public boolean isTienePlantaElectrica() {
