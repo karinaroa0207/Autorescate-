@@ -71,7 +71,7 @@ public class VentanaPrincipal extends JFrame implements VisualizadorMensajes{
     private JTabbedPane crearPestanas() {
         tabs = new JTabbedPane();
         tabs.addTab("Solicitudes", panelSolicitudes);
-        tabs.addTab("Recursos", panelRecursos);
+        tabs.addTab("Unidades", panelRecursos);
         tabs.addTab("Tecnicos", panelTecnicos);
         tabs.addTab("Kits", panelKits);
         tabs.addTab("Historial", panelHistorial);
