@@ -2,175 +2,364 @@ package edu.co.udistrital.model;
 
 public class CentroOperaciones {
 
-    private ColaPrioridad<Solicitud> solicitudesPendientes;
-    private ListaEnlazada<Unidad> unidades;
-    private ListaEnlazada<Tecnico> tecnicos;
-    private ListaEnlazada<Solicitud> casosEnEjecucion;
-    private ListaEnlazada<Solicitud> casosCerrados;
     private Pila<Operacion> historial;
-    private Pila<Kit> kitsEnRevision;
+    private GestorKits gKits;
+    private GestorTecnico gTecs;
+    private GestorSolicitudes gSol;
+    private GestorUnidad gUni;
 
-    public CentroOperaciones() {
-        this.solicitudesPendientes = new ColaPrioridad<>();
-        this.unidades = new ListaEnlazada<>();
-        this.tecnicos = new ListaEnlazada<>();
-        this.casosEnEjecucion = new ListaEnlazada<>();
-        this.casosCerrados = new ListaEnlazada<>();
+    public CentroOperaciones(GestorKits gKits, GestorTecnico gTecs, GestorSolicitudes gSol, GestorUnidad gUni) {
         this.historial = new Pila<>();
-        this.kitsEnRevision = new Pila<>();
+        this.gKits = gKits;
+        this.gTecs = gTecs;
+        this.gSol = gSol;
+        this.gUni = gUni;
     }
 
-    public void agregarUnidad(Unidad unidad) {
-        unidades.agregar(unidad);
+    public void agregarUnidad(Unidad u) {
+        gUni.agregarUnidad(u);
+        historial.apilar(
+                new Operacion(
+                        TipoOperacion.UNIDAD_CREADO,
+                        "Unidad " + u.getId() + " creada",
+                        u
+                )
+        );
     }
 
     public void agregarTecnico(Tecnico tecnico) {
-        tecnicos.agregar(tecnico);
+        historial.apilar(
+                new Operacion(
+                        TipoOperacion.TECNICO_CREADO,
+                        "Tecnico " + tecnico.getNombre() + " creado",
+                        tecnico
+                )
+        );
+        gTecs.agregarTecnico(tecnico);
     }
 
     public void registrarSolicitud(Solicitud solicitud) {
-        solicitudesPendientes.encolar(solicitud);
+        gSol.registrar(solicitud);
+        historial.apilar(
+                new Operacion(
+                        TipoOperacion.SOLICITUD_CREADO,
+                        "Solicituda creada",
+                        solicitud
+                )
+        );
     }
 
-    public void recibirKit(Kit kit) {
-        kitsEnRevision.apilar(kit);
-        historial.apilar(new Operacion("KIT_RECIBIDO", null, null, null));
+    public boolean agregarKit(Kit kit) {
+        historial.apilar(
+                new Operacion(
+                        TipoOperacion.KIT_CREADO,
+                        "Kit " + kit.getId() + " creado",
+                        kit
+                ));
+        return gKits.agregarKit(kit);
     }
 
-    public Kit despacharKit() {
-        Kit kit = kitsEnRevision.desapilar();
-        if (kit != null) {
-            kit.setRequiereRevision(false);
-            historial.apilar(new Operacion("KIT_DESPACHADO", null, null, null));
+    public Kit revisarKit() {
+        boolean rta = gKits.revisarKit();
+        if (rta) {
+            historial.apilar(
+                    new Operacion(
+                            TipoOperacion.KIT_REVISADO,
+                            "Kit revisado y listo para uso",
+                            null
+                    ));
+            return gKits.getUltimoListo();
         }
-        return kit;
+        return null;
     }
 
     public boolean asignarRecurso() {
-        if (solicitudesPendientes.estaVacia()) {
+        if (gSol.getCantidadPendientes() == 0) {
             return false;
         }
 
         Unidad unidadDisponible = buscarUnidadDisponible();
-        Tecnico tecnicoDisponible = buscarTecnicoDisponible();
+        Tecnico tecnicoDisponible = gTecs.obtenerDisponible();
+        Kit kitDisponible = gKits.despacharKit();
 
-        if (unidadDisponible == null || tecnicoDisponible == null) {
+        if (unidadDisponible == null || tecnicoDisponible == null || kitDisponible == null) {
+            if (kitDisponible != null) {
+                gKits.recibirKit(kitDisponible);
+                gKits.revisarKit();
+            }
             return false;
         }
-
-        Solicitud solicitud = solicitudesPendientes.desencolar();
+        tecnicoDisponible.asignarTrabajo(kitDisponible);
         unidadDisponible.setDisponible(false);
-        tecnicoDisponible.setLibre(false);
-        solicitud.asignarRecursos(unidadDisponible, tecnicoDisponible);
-        casosEnEjecucion.agregar(solicitud);
-        historial.apilar(new Operacion("ASIGNACION", solicitud, unidadDisponible, tecnicoDisponible));
+        Solicitud solicitud = gSol.obtenerSiguiente();
+        gSol.agregarEnEjecucion(solicitud, unidadDisponible, tecnicoDisponible);
+        gSol.agregarCasoEjucion(solicitud);
+        historial.apilar(
+                new Operacion(
+                        TipoOperacion.ASIGNACION,
+                        solicitud,
+                        unidadDisponible,
+                        tecnicoDisponible,
+                        kitDisponible,
+                        "Asignado a caso " + solicitud.getId()
+                        + " Unidad " + unidadDisponible.getTipo()
+                        + ", Tecnico " + tecnicoDisponible.getNombre()
+                        + " y Kit " + kitDisponible.getCodigo()
+                ));
+        return true;
+    }
+
+    public boolean asignarRecurso(String idSolicitud, String idUnidad, String idTecnica) {
+        Solicitud solicitud = gSol.obtenerSiguiente();
+        if (solicitud == null) {
+            return false;
+        }
+        Unidad unidadDisponible = gUni.buscarPorId(idUnidad);
+        Tecnico tecnicoDisponible = gTecs.buscarPorId(idTecnica);
+        Kit kitDisponible = gKits.despacharKit();
+
+        if (unidadDisponible == null || tecnicoDisponible == null || kitDisponible == null) {
+            if (kitDisponible != null) {
+                gKits.recibirKit(kitDisponible);
+                gKits.revisarKit();
+            }
+            return false;
+        }
+        tecnicoDisponible.asignarTrabajo(kitDisponible);
+        unidadDisponible.setDisponible(false);
+        gSol.agregarEnEjecucion(solicitud, unidadDisponible, tecnicoDisponible);
+        gSol.agregarCasoEjucion(solicitud);
+        historial.apilar(
+                new Operacion(
+                        TipoOperacion.ASIGNACION,
+                        solicitud,
+                        unidadDisponible,
+                        tecnicoDisponible,
+                        kitDisponible,
+                        "Asignado a caso " + solicitud.getId()
+                        + " Unidad " + unidadDisponible.getTipo()
+                        + ", Tecnico " + tecnicoDisponible.getNombre()
+                        + " y Kit " + kitDisponible.getCodigo()
+                ));
         return true;
     }
 
     public boolean cerrarSolicitud(String idSolicitud) {
-        Solicitud solicitud = casosEnEjecucion.remover(new Criterio<Solicitud>() {
-            @Override
-            public boolean cumple(Solicitud dato) {
-                return dato.getId().equals(idSolicitud);
-            }
-        });
+        Solicitud solicitud = gSol.quitarEnEjecucion(idSolicitud);
 
         if (solicitud == null || solicitud.getUnidadAsignada() == null || solicitud.getTecnicoAsignado() == null) {
             return false;
         }
-
+        gKits.recibirKit(solicitud.getKit());
         solicitud.marcarComoAtendida();
-        solicitud.getUnidadAsignada().setDisponible(true);
-        solicitud.getTecnicoAsignado().setLibre(true);
-        casosCerrados.agregar(solicitud);
-        historial.apilar(new Operacion("CIERRE", solicitud, solicitud.getUnidadAsignada(), solicitud.getTecnicoAsignado()));
+        gSol.agregarCasoCerrado(solicitud);
+        historial.apilar(
+                new Operacion(
+                        TipoOperacion.CIERRE,
+                        solicitud,
+                        solicitud.getUnidadAsignada(),
+                        solicitud.getTecnicoAsignado(),
+                        solicitud.getKit(),
+                        "Cerrada solicitud " + idSolicitud
+                ));
         return true;
     }
 
+    public boolean eliminarUnidad(String id) {
+        Unidad seleccionada = gUni.buscarPorId(id);
+
+        if (seleccionada == null || !seleccionada.puedeAsignarse()) {
+            return false;
+        }
+
+        boolean exito = gUni.eliminarUnidad(id);
+        if (exito) {
+            historial.apilar(
+                    new Operacion(
+                            TipoOperacion.UNIDAD_ELIMINADO,
+                            "Eliminada unidad " + seleccionada.getId(),
+                            seleccionada                        
+                    ));
+        }
+        return exito;
+    }
+
+    public boolean modificarUnidad(String id, String nuevaZona, EstadoUnidad nuevoEstado) {
+        Unidad anterior = gUni.buscarPorId(id).clonar();        
+        Unidad exito = gUni.modificarUnidad(id, nuevaZona, nuevoEstado);
+        if (exito != null) {
+            historial.apilar(
+                    new Operacion(
+                            TipoOperacion.UNIDAD_EDITADO,
+                            "Unidad " + exito.getTipo() + " Modificada",
+                            anterior,
+                            exito
+                    ));
+        }
+        return exito != null;
+    }
+
+    public Unidad buscarUnidad(String id) {
+        return gUni.buscarPorId(id);
+    }
+
     public boolean deshacerUltimaOperacion() {
+
         while (!historial.estaVacia()) {
             Operacion ultimaOp = historial.desapilar();
 
-            if ("ASIGNACION".equals(ultimaOp.getTipo())) {
-                Solicitud solicitud = ultimaOp.getSolicitud();
-                casosEnEjecucion.remover(new Criterio<Solicitud>() {
-                    @Override
-                    public boolean cumple(Solicitud dato) {
-                        return dato.getId().equals(solicitud.getId());
-                    }
-                });
-                ultimaOp.getUnidad().setDisponible(true);
-                ultimaOp.getTecnico().setLibre(true);
-                solicitud.revertirAsignacion();
-                solicitudesPendientes.encolar(solicitud);
-                return true;
-            }
-
-            if ("CIERRE".equals(ultimaOp.getTipo())) {
-                Solicitud solicitud = ultimaOp.getSolicitud();
-                casosCerrados.remover(new Criterio<Solicitud>() {
-                    @Override
-                    public boolean cumple(Solicitud dato) {
-                        return dato.getId().equals(solicitud.getId());
-                    }
-                });
-                solicitud.asignarRecursos(ultimaOp.getUnidad(), ultimaOp.getTecnico());
-                ultimaOp.getUnidad().setDisponible(false);
-                ultimaOp.getTecnico().setLibre(false);
-                casosEnEjecucion.agregar(solicitud);
-                return true;
+            switch (ultimaOp.getTipo()) {
+                case SOLICITUD_CREADO: {
+                    gSol.revertirCreracion((Solicitud) ultimaOp.getEstadoAnterior());
+                    return true;
+                }
+                case ASIGNACION: {
+                    Solicitud solicitud = ultimaOp.getSolicitud();
+                    Unidad unidad = ultimaOp.getUnidad();
+                    Tecnico tecnico = ultimaOp.getTecnico();
+                    Kit kit = ultimaOp.getKit();
+                    unidad.revertirAsignacion();
+                    tecnico.revertirAsignar();
+                    gKits.revertirAsignacion(kit);                   
+                    gSol.revertirAsignacion(solicitud);
+                    return true;
+                }
+                case CIERRE: {
+                    Solicitud solicitud = ultimaOp.getSolicitud();
+                    Unidad unidad = ultimaOp.getUnidad();
+                    Tecnico tecnico = ultimaOp.getTecnico();
+                    unidad.setDisponible(false);
+                    gKits.revisarKit();
+                    Kit kit = gKits.despacharKit();
+                    tecnico.asignarTrabajo(kit);
+                    solicitud.asignarRecursos(ultimaOp.getUnidad(), ultimaOp.getTecnico());
+                    gSol.revertirCierre(solicitud);
+                    return true;
+                }              
+                case TECNICO_CREADO: {
+                    gTecs.eliminar(((Tecnico) ultimaOp.getEstadoAnterior()).getIdentificacion());
+                    return true;
+                }
+                case UNIDAD_CREADO: {
+                    gUni.eliminarUnidad(((Unidad) ultimaOp.getEstadoAnterior()).getId());
+                    return true;
+                }       
+                case KIT_CREADO: {
+                    gKits.revertirCreacion();
+                    return true;
+                }       
+                case UNIDAD_ELIMINADO: {
+                    gUni.agregarUnidad((Unidad) ultimaOp.getEstadoAnterior());
+                    return true;
+                }
+                case UNIDAD_EDITADO: {                
+                    Unidad anterior = (Unidad) ultimaOp.getEstadoAnterior();
+                    Unidad actual = (Unidad) ultimaOp.getEstadoActual();
+                    actual.setEstado(anterior.getEstado());
+                    actual.setZona(anterior.getZona());
+                    return true;
+                }
+                default:
+                    break;
             }
         }
+
         return false;
     }
 
     private Unidad buscarUnidadDisponible() {
-        Nodo<Unidad> actualUnidad = unidades.getCabeza();
-        while (actualUnidad != null) {
-            if (actualUnidad.getDato().puedeAsignarse()) {
-                return actualUnidad.getDato();
-            }
-            actualUnidad = actualUnidad.getSiguiente();
+        return gUni.buscarUnidadDisponible();
+    }
+
+    public Lista<Unidad> getUnidades() {
+        return gUni.obtenerTodas();
+    }
+
+    public Lista<Unidad> getUnidadesDisponibles() {
+        return gUni.obtenerDisponibles();
+    }
+
+    public Lista<Tecnico> getTecnicos() {
+        return gTecs.obtenerTodos();
+    }
+
+    public Lista<Tecnico> getTecnicosDisponibles() {
+        return gTecs.obtenerDisponibles();
+    }
+
+    public Lista<Solicitud> getSolicitudesPendientes() {
+        return gSol.getSolicitudesPendientes();
+    }
+
+    public Lista<Solicitud> getCasosEnEjecucion() {
+        return gSol.getCasosEnEjecucion();
+    }
+
+    public Lista<Solicitud> getCasosCerrados() {
+        return gSol.getCasosCerrados();
+    }
+
+    public Lista<Operacion> getHistorial() {
+        Lista<Operacion> lista = new ArregloLista<>();
+        historial.recorrer(
+                (elemento) -> {
+                    lista.add(elemento);
+                });
+        return lista;
+    }
+
+    public Lista<Kit> getKits() {
+        return gKits.getAllKits();
+    }
+
+    public Lista<Kit> getKitsDisponibles() {
+        return gKits.getKitsListos();
+    }
+
+    public Solicitud verSiguienteSolicitud() {
+        return gSol.verSiguiente();
+    }
+
+    public Tecnico buscarTecnicoPorId(String id) {
+        return gTecs.buscarPorId(id);
+    }
+
+    public Tecnico eliminarTecnico(String id) {
+        Tecnico seleccionada = gTecs.buscarPorId(id);
+
+        if (seleccionada == null || !seleccionada.puedeAsignarse()) {
+            return null;
         }
-        return null;
-    }
 
-    private Tecnico buscarTecnicoDisponible() {
-        Nodo<Tecnico> actualTecnico = tecnicos.getCabeza();
-        while (actualTecnico != null) {
-            if (actualTecnico.getDato().puedeAsignarse()) {
-                return actualTecnico.getDato();
-            }
-            actualTecnico = actualTecnico.getSiguiente();
+        Tecnico exito = gTecs.eliminar(id);
+        if (exito != null) {
+            historial.apilar(
+                    new Operacion(
+                            TipoOperacion.TECNICO_ELIMINADO,
+                            "Eliminada unidad " + seleccionada.getIdentificacion(),
+                            exito
+                    ));
         }
-        return null;
+        return exito;
     }
 
-    public ListaEnlazada<Unidad> getUnidades() {
-        return unidades;
+    public boolean asignarTecnico(String id) {
+        return gTecs.asignarTecnico(id);
     }
 
-    public ListaEnlazada<Tecnico> getTecnicos() {
-        return tecnicos;
+    public boolean liberarTecnico(String id) {
+        return gTecs.liberarTecnico(id);
     }
 
-    public ColaPrioridad<Solicitud> getSolicitudesPendientes() {
-        return solicitudesPendientes;
+    public boolean estaTecnicoDisponible(String id) {
+        return gTecs.estaDisponible(id);
     }
 
-    public ListaEnlazada<Solicitud> getCasosEnEjecucion() {
-        return casosEnEjecucion;
+    public Lista<Tecnico> obtenerTecnicosDisponibles() {
+        return gTecs.obtenerDisponibles();
     }
 
-    public ListaEnlazada<Solicitud> getCasosCerrados() {
-        return casosCerrados;
-    }
-
-    public Pila<Operacion> getHistorial() {
-        return historial;
-    }
-
-    public Pila<Kit> getKitsEnRevision() {
-        return kitsEnRevision;
+    public Lista<Tecnico> obtenerTodosLosTecnicos() {
+        return gTecs.obtenerTodos();
     }
 }

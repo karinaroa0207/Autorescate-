@@ -16,4 +16,9 @@ public class MotoApoyo extends Unidad {
     public boolean isTieneCajaHerramientas() {
         return tieneCajaHerramientas;
     }
+
+    @Override
+    public Unidad clonar() {
+        return new MotoApoyo(this.getZona(), tieneCajaHerramientas);
+    }
 }

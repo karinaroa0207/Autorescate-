@@ -1,6 +1,6 @@
 package edu.co.udistrital.model;
 
-public class Pila<T> {
+public class Pila<T> implements MiIterable<T>{
     
     private Nodo<T> cima;
     private int tamano;
@@ -37,5 +37,35 @@ public class Pila<T> {
 
     public Nodo<T> getCima() {
         return cima;
+    }
+    
+     @Override
+    public MiIterador<T> iterator() {
+        return new Iterador();
+    }
+
+    private class Iterador implements MiIterador<T> {
+
+        private Nodo<T> actual = cima;
+
+        @Override
+        public boolean hasNext() {
+            return actual != null;
+        }
+
+        @Override
+        public T next() {
+            T dato = actual.getDato();
+            actual = actual.getSiguiente();
+            return dato;
+        }
+    }
+    
+    public void recorrer(Consumidor<T> c) {
+        Nodo<T> actual = cima;
+        while (actual != null) {
+            c.aplicar(actual.getDato());            
+            actual = actual.getSiguiente();
+        }
     }
 }

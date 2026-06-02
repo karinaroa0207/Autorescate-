@@ -1,5 +1,6 @@
 package edu.co.udistrital.view;
 
+import edu.co.udistrital.controller.VisualizadorMensajes;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -15,8 +16,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import javax.swing.JOptionPane;
 
-public class VentanaPrincipal extends JFrame {
+public class VentanaPrincipal extends JFrame implements VisualizadorMensajes{
 
     private PanelSolicitudes panelSolicitudes;
     private PanelRecursos panelRecursos;
@@ -27,6 +29,7 @@ public class VentanaPrincipal extends JFrame {
     private JButton btnExportar;
     private JButton btnActualizar;
     private JTextArea txtMensajes;
+    private JTabbedPane tabs;
 
     public VentanaPrincipal() {
         setTitle("AutoRescate 24/7 - Centro de Operaciones");
@@ -44,6 +47,8 @@ public class VentanaPrincipal extends JFrame {
         add(crearEncabezado(), BorderLayout.NORTH);
         add(crearPestanas(), BorderLayout.CENTER);
         add(crearBarraInferior(), BorderLayout.SOUTH);
+        setLocationRelativeTo(null);
+        setVisible(true);
     }
 
     private JPanel crearEncabezado() {
@@ -64,7 +69,7 @@ public class VentanaPrincipal extends JFrame {
     }
 
     private JTabbedPane crearPestanas() {
-        JTabbedPane tabs = new JTabbedPane();
+        tabs = new JTabbedPane();
         tabs.addTab("Solicitudes", panelSolicitudes);
         tabs.addTab("Recursos", panelRecursos);
         tabs.addTab("Tecnicos", panelTecnicos);
@@ -101,28 +106,7 @@ public class VentanaPrincipal extends JFrame {
     public void agregarFila(JTable tabla, Object[] datos) {
         ((DefaultTableModel) tabla.getModel()).addRow(datos);
     }
-
-    public String getCliente() { return panelSolicitudes.getCliente(); }
-    public String getDescripcion() { return panelSolicitudes.getDescripcion(); }
-    public String getZonaSolicitud() { return panelSolicitudes.getZonaSolicitud(); }
-    public String getTipoServicio() { return panelSolicitudes.getTipoServicio(); }
-    public String getPrioridad() { return panelSolicitudes.getPrioridad(); }
-    public String getCerrarId() { return panelSolicitudes.getCerrarId(); }
-    public String getTipoUnidad() { return panelRecursos.getTipoUnidad(); }
-    public String getZonaUnidad() { return panelRecursos.getZonaUnidad(); }
-    public String getIdTecnico() { return panelTecnicos.getIdTecnico(); }
-    public String getNombreTecnico() { return panelTecnicos.getNombreTecnico(); }
-    public String getEspecialidad() { return panelTecnicos.getEspecialidad(); }
-    public String getZonaTecnico() { return panelTecnicos.getZonaTecnico(); }
-    public String getCodigoKit() { return panelKits.getCodigoKit(); }
-
-    public JButton getBtnRegistrarSolicitud() { return panelSolicitudes.getBtnRegistrarSolicitud(); }
-    public JButton getBtnAsignar() { return panelSolicitudes.getBtnAsignar(); }
-    public JButton getBtnCerrarSolicitud() { return panelSolicitudes.getBtnCerrarSolicitud(); }
-    public JButton getBtnRegistrarUnidad() { return panelRecursos.getBtnRegistrarUnidad(); }
-    public JButton getBtnRegistrarTecnico() { return panelTecnicos.getBtnRegistrarTecnico(); }
-    public JButton getBtnRecibirKit() { return panelKits.getBtnRecibirKit(); }
-    public JButton getBtnDespacharKit() { return panelKits.getBtnDespacharKit(); }
+   
     public JButton getBtnDeshacer() { return btnDeshacer; }
     public JButton getBtnExportar() { return btnExportar; }
     public JButton getBtnActualizar() { return btnActualizar; }
@@ -139,8 +123,64 @@ public class VentanaPrincipal extends JFrame {
         panelSolicitudes.limpiarFormulario();
     }
 
+    @Override
     public void agregarMensaje(String mensaje) {
         txtMensajes.append("> " + mensaje + "\n");
         txtMensajes.setCaretPosition(txtMensajes.getDocument().getLength());
     }
+    
+    @Override
+    public void mostrarMensajeError(String mensaje, String titulo) {
+        JOptionPane.showMessageDialog(null, mensaje, titulo, JOptionPane.ERROR_MESSAGE);
+    }
+   
+    @Override
+    public void mostrarMensajeError(String mensaje) {
+        mostrarMensajeError(mensaje, null);
+    }
+
+    @Override
+    public void mostrarMensaje(String mensaje, String titulo) {
+        JOptionPane.showMessageDialog(null, mensaje, titulo, JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    @Override
+    public void mostrarMensaje(String mensaje) {
+        mostrarMensaje(mensaje, null);
+    }
+
+    @Override
+    public void mostrarMensajeWarning(String mensaje, String titulo) {
+        JOptionPane.showMessageDialog(null, mensaje, titulo, JOptionPane.WARNING_MESSAGE);
+    }
+
+    @Override
+    public void mostrarMensajeWarning(String mensaje) {
+        mostrarMensajeWarning(mensaje, null);
+    }
+
+    public PanelKits getPanelKits() {
+        return panelKits;
+    }       
+
+    public PanelTecnicos getPanelTecnicos() {
+        return panelTecnicos;
+    }    
+
+    public PanelSolicitudes getPanelSolicitudes() {
+        return panelSolicitudes;
+    }
+
+    public PanelRecursos getPanelRecursos() {
+        return panelRecursos;
+    }
+
+    public PanelHistorial getPanelHistorial() {
+        return panelHistorial;
+    }
+
+    public JTabbedPane getTabs() {
+        return tabs;
+    }        
+
 }

@@ -17,4 +17,9 @@ public class Grua extends Unidad {
     public double getCapacidadToneladas() {
         return capacidadToneladas;
     }
+
+    @Override
+    public Unidad clonar() {
+        return new Grua(this.getZona(), capacidadToneladas);
+    }
 }

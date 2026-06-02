@@ -17,4 +17,9 @@ public class CamionetaAsistencia extends Unidad {
     public boolean isTienePlantaElectrica() {
         return tienePlantaElectrica;
     }
+
+    @Override
+    public Unidad clonar() {
+        return new CamionetaAsistencia(this.getZona(), tienePlantaElectrica);
+    }
 }

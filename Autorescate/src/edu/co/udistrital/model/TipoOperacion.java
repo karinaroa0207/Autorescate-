@@ -1,0 +1,15 @@
+package edu.co.udistrital.model;
+
+public enum TipoOperacion {
+    ASIGNACION,
+    CIERRE,
+    SOLICITUD_CREADO,
+    KIT_REVISADO,
+    KIT_CREADO,
+    TECNICO_CREADO,
+    TECNICO_EDITADO,
+    TECNICO_ELIMINADO,    
+    UNIDAD_CREADO,
+    UNIDAD_EDITADO,
+    UNIDAD_ELIMINADO,    
+}

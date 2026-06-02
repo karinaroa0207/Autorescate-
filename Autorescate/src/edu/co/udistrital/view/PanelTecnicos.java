@@ -8,6 +8,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import javax.swing.table.DefaultTableModel;
 
 public class PanelTecnicos extends JPanel {
 

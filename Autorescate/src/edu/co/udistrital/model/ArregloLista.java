@@ -1,6 +1,6 @@
 package edu.co.udistrital.model;
 
-public class ArregloLista<T extends Clonable<T>> implements Lista<T> {
+public class ArregloLista<T> implements Lista<T> {
 
     private Object[] datos;
     private int tamaño;

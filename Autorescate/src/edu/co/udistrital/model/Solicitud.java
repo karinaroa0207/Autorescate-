@@ -1,6 +1,7 @@
 package edu.co.udistrital.model;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 public class Solicitud implements MiComparable<Solicitud> {
@@ -46,6 +47,7 @@ public class Solicitud implements MiComparable<Solicitud> {
     public Tecnico getTecnicoAsignado() { return tecnicoAsignado; }
     public LocalDateTime getFechaRegistro() { return fechaRegistro; }
     public LocalDateTime getFechaCierre() { return fechaCierre; }
+    public Kit getKit() { return tecnicoAsignado.getKit(); }
     
     public void asignarRecursos(Unidad unidad, Tecnico tecnico) {
         this.unidadAsignada = unidad;
@@ -57,6 +59,8 @@ public class Solicitud implements MiComparable<Solicitud> {
         if (unidadAsignada == null || tecnicoAsignado == null) {
             return;
         }
+        tecnicoAsignado.setLibre(true);
+        unidadAsignada.setDisponible(true);
         this.estado = EstadoSolicitud.ATENDIDA;
         this.fechaCierre = LocalDateTime.now();
     }
@@ -77,4 +81,37 @@ public class Solicitud implements MiComparable<Solicitud> {
         }
         return 0;
     }
+    
+    public Object[] toRowEjecucion() {
+        return new Object[]{
+            id, 
+            cliente, 
+            (unidadAsignada != null) ? unidadAsignada.getTipo() : "Sin asignar", 
+            (tecnicoAsignado != null) ? tecnicoAsignado.getNombre() : "Sin asignar", 
+            estado
+        };
+    }
+    
+    public Object[] toRowPendiente() {
+        return new Object[]{
+            id, 
+            cliente,
+            tipoServicio, 
+            zona, 
+            prioridad, 
+            estado
+        };
+    }
+    
+    public Object[] toRowCierre() {
+        return new Object[]{
+            id, 
+            cliente, 
+            tipoServicio, 
+            unidadAsignada.getTipo(),
+            tecnicoAsignado.getNombre(),
+            fechaCierre.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))
+        };
+    }
+    
 }

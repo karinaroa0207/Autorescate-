@@ -17,4 +17,9 @@ public class VehiculoLiviano extends Unidad {
     public int getCapacidadPasajeros() {
         return capacidadPasajeros;
     }
+
+    @Override
+    public Unidad clonar() {
+        return new VehiculoLiviano(this.getZona(), capacidadPasajeros);
+    }
 }

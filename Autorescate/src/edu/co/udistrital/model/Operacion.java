@@ -1,38 +1,85 @@
 package edu.co.udistrital.model;
 
 public class Operacion {
-    
-    private String tipo;
+
+    private TipoOperacion tipo;
     private Solicitud solicitud;
     private Unidad unidad;
     private Tecnico tecnico;
+    private Kit kit;
     private String detalle;
-
-    public Operacion(String tipo, Solicitud solicitud, Unidad unidad, Tecnico tecnico) {
+    private Object estadoAnterior;
+    private Object estadoActual;
+    
+    public Operacion(TipoOperacion tipo, Solicitud solicitud, Unidad unidad, Tecnico tecnico, Kit kit, String detalle) {
         this.tipo = tipo;
         this.solicitud = solicitud;
         this.unidad = unidad;
         this.tecnico = tecnico;
-        this.detalle = solicitud == null ? tipo : tipo + " solicitud #" + solicitud.getId();
+        this.kit = kit;
+        this.detalle = detalle;
     }
 
-    public String getTipo() { 
-        return tipo; 
-    }
+    public Operacion(TipoOperacion tipo, Solicitud solicitud, Unidad unidad, Tecnico tecnico, Kit kit, String detalle, Object estadoAnterior) {
+        this.tipo = tipo;
+        this.solicitud = solicitud;
+        this.unidad = unidad;
+        this.tecnico = tecnico;
+        this.kit = kit;
+        this.detalle = detalle;
+        this.estadoAnterior = estadoAnterior;
+    }    
     
-    public Solicitud getSolicitud() { 
-        return solicitud; 
-    }
+    public Operacion(TipoOperacion tipo, String detalle, Object estadoAnterior) {
+        this.tipo = tipo;
+        this.detalle = detalle;
+        this.estadoAnterior = estadoAnterior;
+    }    
     
-    public Unidad getUnidad() { 
-        return unidad; 
+    public Operacion(TipoOperacion tipo, String detalle, Object estadoAnterior, Object estadoActual) {
+        this.tipo = tipo;
+        this.detalle = detalle;
+        this.estadoAnterior = estadoAnterior;
+        this.estadoActual = estadoActual;
+    }        
+
+    public TipoOperacion getTipo() {
+        return tipo;
     }
-    
-    public Tecnico getTecnico() { 
-        return tecnico; 
+
+    public Solicitud getSolicitud() {
+        return solicitud;
+    }
+
+    public Unidad getUnidad() {
+        return unidad;
+    }
+
+    public Tecnico getTecnico() {
+        return tecnico;
     }
 
     public String getDetalle() {
         return detalle;
+    }
+
+    public Object getEstadoAnterior() {
+        return estadoAnterior;
+    }   
+
+    public Object getEstadoActual() {
+        return estadoActual;
+    }        
+
+    public Kit getKit() {
+        return kit;
+    }    
+
+    public Object[] toRow(int orden) {
+        return new Object[]{
+            orden,
+            tipo,
+            detalle
+        };
     }
 }

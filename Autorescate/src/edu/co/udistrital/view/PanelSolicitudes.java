@@ -17,8 +17,10 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.BoxLayout;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.text.DefaultEditorKit;
 
 public class PanelSolicitudes extends JPanel {
 
@@ -29,17 +31,32 @@ public class PanelSolicitudes extends JPanel {
     private JComboBox<String> cmbTipoServicio;
     private JButton btnRegistrarSolicitud;
     private JButton btnAsignar;
+    private JButton btnAsignarManual;
     private JTextField txtCerrarId;
     private JButton btnCerrarSolicitud;
     private JTable tablaPendientes;
     private JTable tablaEjecucion;
     private JTable tablaCerrados;
+    private PanelAsignacion panelAsignacion;
+    private JTabbedPane tablas;
+    private JTabbedPane tabs;
 
     public PanelSolicitudes() {
         setLayout(new BorderLayout(10, 10));
         setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        add(crearFormulario(), BorderLayout.NORTH);
-        add(crearTablas(), BorderLayout.CENTER);
+        this.panelAsignacion = new PanelAsignacion();
+
+        tabs = new JTabbedPane();
+        JPanel registro = new JPanel();
+
+        registro.setLayout(new BorderLayout(10, 10));
+
+        registro.add(crearFormulario(), BorderLayout.NORTH);
+        registro.add(crearTablas(), BorderLayout.CENTER);
+
+        tabs.addTab("Registro", registro);
+        tabs.addTab("Asignacion", panelAsignacion);
+        add(tabs, BorderLayout.CENTER);
     }
 
     private JPanel crearFormulario() {
@@ -47,7 +64,7 @@ public class PanelSolicitudes extends JPanel {
         formulario.setBorder(javax.swing.BorderFactory.createTitledBorder("Registrar solicitud"));
 
         txtCliente = new JTextField(15);
-        txtDescripcion = new JTextField(22);
+        txtDescripcion = new JTextField(20);
         txtZonaSolicitud = new JTextField(12);
         txtPrioridad = new JTextField("0", 5);
         cmbTipoServicio = new JComboBox<>(new String[]{
@@ -55,26 +72,46 @@ public class PanelSolicitudes extends JPanel {
             "Combustible", "Revision mecanica", "Emergencia vial"
         });
         btnRegistrarSolicitud = new JButton("Registrar");
-        btnAsignar = new JButton("Asignar siguiente");
-        txtCerrarId = new JTextField(5);
+        btnAsignar = new JButton("Asignar siguiente automatico");
+        btnAsignarManual = new JButton("Asignar siguiente manual");
+        txtCerrarId = new JTextField(22);
         btnCerrarSolicitud = new JButton("Cerrar caso");
+        agregarMenuContextual(txtCerrarId);
 
         agregarCampo(formulario, "Cliente", txtCliente, 0, 0);
         agregarCampo(formulario, "Descripcion", txtDescripcion, 2, 0);
+
         agregarCampo(formulario, "Zona", txtZonaSolicitud, 0, 1);
         agregarCampo(formulario, "Servicio", cmbTipoServicio, 2, 1);
         agregarCampo(formulario, "Prioridad", txtPrioridad, 4, 1);
 
-        JPanel acciones = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        acciones.add(btnRegistrarSolicitud);
-        acciones.add(btnAsignar);
-        acciones.add(new JLabel("ID"));
-        acciones.add(txtCerrarId);
-        acciones.add(btnCerrarSolicitud);
+        GridBagConstraints gbcBtn = new GridBagConstraints();
+        gbcBtn.insets = new Insets(4, 10, 4, 4);
+        gbcBtn.gridx = 6;
+        gbcBtn.gridy = 1;
+        gbcBtn.fill = GridBagConstraints.HORIZONTAL;
+        formulario.add(btnRegistrarSolicitud, gbcBtn);
+
+        JPanel acciones = new JPanel();
+        acciones.setLayout(new BoxLayout(acciones, BoxLayout.Y_AXIS));
+        acciones.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
+        JPanel filaAsignar = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        filaAsignar.add(btnAsignar);
+        filaAsignar.add(btnAsignarManual);
+
+        JPanel filaCerrar = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        filaCerrar.add(new JLabel("ID a cerrar:"));
+        filaCerrar.add(txtCerrarId);
+        filaCerrar.add(btnCerrarSolicitud);
+
+        acciones.add(filaAsignar);
+        acciones.add(filaCerrar);
 
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(formulario, BorderLayout.CENTER);
         panel.add(acciones, BorderLayout.SOUTH);
+
         return panel;
     }
 
@@ -85,7 +122,7 @@ public class PanelSolicitudes extends JPanel {
         agregarMenuCopiarId(tablaPendientes);
         agregarMenuCopiarId(tablaEjecucion);
         agregarMenuCopiarId(tablaCerrados);
-        JTabbedPane tablas = new JTabbedPane();
+        tablas = new JTabbedPane();
         tablas.addTab("Pendientes", new JScrollPane(tablaPendientes));
         tablas.addTab("En ejecucion", new JScrollPane(tablaEjecucion));
         tablas.addTab("Atendidas", new JScrollPane(tablaCerrados));
@@ -103,20 +140,71 @@ public class PanelSolicitudes extends JPanel {
         gbc.gridx = x + 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel.add(campo, gbc);
-    }        
+    }
 
-    public String getCliente() { return txtCliente.getText().trim(); }
-    public String getDescripcion() { return txtDescripcion.getText().trim(); }
-    public String getZonaSolicitud() { return txtZonaSolicitud.getText().trim(); }
-    public String getTipoServicio() { return (String) cmbTipoServicio.getSelectedItem(); }
-    public String getPrioridad() { return txtPrioridad.getText().trim(); }
-    public String getCerrarId() { return txtCerrarId.getText().trim(); }
-    public JButton getBtnRegistrarSolicitud() { return btnRegistrarSolicitud; }
-    public JButton getBtnAsignar() { return btnAsignar; }
-    public JButton getBtnCerrarSolicitud() { return btnCerrarSolicitud; }
-    public JTable getTablaPendientes() { return tablaPendientes; }
-    public JTable getTablaEjecucion() { return tablaEjecucion; }
-    public JTable getTablaCerrados() { return tablaCerrados; }
+    public String getCliente() {
+        return txtCliente.getText().trim();
+    }
+
+    public String getDescripcion() {
+        return txtDescripcion.getText().trim();
+    }
+
+    public String getZonaSolicitud() {
+        return txtZonaSolicitud.getText().trim();
+    }
+
+    public String getTipoServicio() {
+        return (String) cmbTipoServicio.getSelectedItem();
+    }
+
+    public String getPrioridad() {
+        return txtPrioridad.getText().trim();
+    }
+
+    public String getCerrarId() {
+        return txtCerrarId.getText().trim();
+    }
+
+    public JButton getBtnRegistrarSolicitud() {
+        return btnRegistrarSolicitud;
+    }
+
+    public JButton getBtnAsignar() {
+        return btnAsignar;
+    }
+
+    public JButton getBtnCerrarSolicitud() {
+        return btnCerrarSolicitud;
+    }
+
+    public JButton getBtnAsignarManual() {
+        return btnAsignarManual;
+    }
+
+    public JTable getTablaPendientes() {
+        return tablaPendientes;
+    }
+
+    public JTable getTablaEjecucion() {
+        return tablaEjecucion;
+    }
+
+    public JTable getTablaCerrados() {
+        return tablaCerrados;
+    }
+
+    public PanelAsignacion getPanelAsignacion() {
+        return panelAsignacion;
+    }
+
+    public JTabbedPane getTabTablas() {
+        return tablas;
+    }
+
+    public JTabbedPane getTabs() {
+        return tabs;
+    }
 
     public void limpiarFormulario() {
         txtCliente.setText("");
@@ -124,7 +212,7 @@ public class PanelSolicitudes extends JPanel {
         txtZonaSolicitud.setText("");
         txtPrioridad.setText("0");
     }
-    
+
     private void agregarMenuCopiarId(JTable tabla) {
 
         JPopupMenu menu = new JPopupMenu();
@@ -155,5 +243,24 @@ public class PanelSolicitudes extends JPanel {
                 }
             }
         });
+    }
+
+    private void agregarMenuContextual(JTextField campo) {
+        JPopupMenu menu = new JPopupMenu();
+
+        JMenuItem cortar = new JMenuItem(new DefaultEditorKit.CutAction());
+        cortar.setText("Cortar");
+
+        JMenuItem copiar = new JMenuItem(new DefaultEditorKit.CopyAction());
+        copiar.setText("Copiar");
+
+        JMenuItem pegar = new JMenuItem(new DefaultEditorKit.PasteAction());
+        pegar.setText("Pegar");
+
+        menu.add(cortar);
+        menu.add(copiar);
+        menu.add(pegar);
+
+        campo.setComponentPopupMenu(menu);
     }
 }

@@ -1,7 +1,7 @@
 package edu.co.udistrital.model;
 
-public class ListaEnlazada<T> {
-    
+public class ListaEnlazada<T> implements MiIterable<T>{
+
     private Nodo<T> cabeza;
     private int tamano;
 
@@ -53,7 +53,7 @@ public class ListaEnlazada<T> {
             actual = actual.getSiguiente();
         }
         return null;
-    }
+    }        
 
     public boolean estaVacia() {
         return cabeza == null;
@@ -65,5 +65,35 @@ public class ListaEnlazada<T> {
 
     public Nodo<T> getCabeza() {
         return cabeza;
+    }
+
+    @Override
+    public MiIterador<T> iterator() {
+        return new Iterador();
+    }
+
+    private class Iterador implements MiIterador<T> {
+
+        private Nodo<T> actual = cabeza;
+
+        @Override
+        public boolean hasNext() {
+            return actual != null;
+        }
+
+        @Override
+        public T next() {
+            T dato = actual.getDato();
+            actual = actual.getSiguiente();
+            return dato;
+        }
+    }
+    
+    public void recorrer(Consumidor<T> c) {
+        Nodo<T> actual = cabeza;
+        while (actual != null) {
+            c.aplicar(actual.getDato());            
+            actual = actual.getSiguiente();
+        }
     }
 }

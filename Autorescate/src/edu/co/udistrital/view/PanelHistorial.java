@@ -12,7 +12,7 @@ public class PanelHistorial extends JPanel {
     public PanelHistorial() {
         setLayout(new BorderLayout(10, 10));
         setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        tablaHistorial = TablaFactory.crear(new String[]{"Orden", "Tipo", "Solicitud", "Unidad", "Tecnico"});
+        tablaHistorial = TablaFactory.crear(new String[]{"Orden", "Tipo", "Descripcion"});
         add(new JScrollPane(tablaHistorial), BorderLayout.CENTER);
     }
 
