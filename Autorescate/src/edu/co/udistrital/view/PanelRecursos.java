@@ -11,6 +11,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import javax.swing.ListSelectionModel;
 
 public class PanelRecursos extends JPanel {
 
@@ -33,6 +34,7 @@ public class PanelRecursos extends JPanel {
         add(crearFormulario(), BorderLayout.NORTH);
         
         tablaUnidades = TablaFactory.crear(new String[]{"UUID", "Tipo", "Zona", "Estado", "Disponible"});
+        tablaUnidades.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         add(new JScrollPane(tablaUnidades), BorderLayout.CENTER);
     }
 
