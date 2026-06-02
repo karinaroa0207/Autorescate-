@@ -17,11 +17,7 @@ import edu.co.udistrital.model.UnidadFactory;
 import edu.co.udistrital.view.VentanaPrincipal;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
-import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
 
 public class ControladorPrincipal {
 

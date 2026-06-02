@@ -21,6 +21,11 @@ public class Cliente {
     public String getPlacaVehiculo() { return placaVehiculo; }
     public String getModeloVehiculo() { return modeloVehiculo; }
 
+    public void setNombre(String nombre) { this.nombre = nombre; }
+    public void setTelefono(String telefono) { this.telefono = telefono; }
+    public void setPlacaVehiculo(String placaVehiculo) { this.placaVehiculo = placaVehiculo; }
+    public void setModeloVehiculo(String modeloVehiculo) { this.modeloVehiculo = modeloVehiculo; }
+
     public String[] toRow() {
         return new String[]{
             documento != null ? documento : "",

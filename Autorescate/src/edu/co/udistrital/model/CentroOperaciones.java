@@ -75,6 +75,45 @@ public class CentroOperaciones {
         return gKits.agregarKit(kit);
     }
 
+    public boolean modificarCliente(String documento, String nuevoNombre, String nuevoTelefono, String nuevaPlaca, String nuevoModelo) {
+        Cliente anterior = gClientes.buscarPorDocumento(documento);
+        if (anterior == null) {
+            return false;
+        }
+        Cliente copiaAnterior = new Cliente(anterior.getDocumento(), anterior.getNombre(), anterior.getTelefono(), anterior.getPlacaVehiculo(), anterior.getModeloVehiculo());
+        Cliente actualizado = gClientes.modificarCliente(documento, nuevoNombre, nuevoTelefono, nuevaPlaca, nuevoModelo);
+        if (actualizado != null) {
+            historial.apilar(
+                    new Operacion(
+                            TipoOperacion.CLIENTE_EDITADO,
+                            "Cliente " + actualizado.getDocumento() + " modificado",
+                            copiaAnterior,
+                            actualizado
+                    )
+            );
+            return true;
+        }
+        return false;
+    }
+
+    public Cliente eliminarCliente(String documento) {
+        Cliente seleccionada = gClientes.buscarPorDocumento(documento);
+        if (seleccionada == null) {
+            return null;
+        }
+        Cliente exito = gClientes.eliminarCliente(documento);
+        if (exito != null) {
+            historial.apilar(
+                    new Operacion(
+                            TipoOperacion.CLIENTE_ELIMINADO,
+                            "Cliente " + seleccionada.getDocumento() + " eliminado",
+                            seleccionada
+                    )
+            );
+        }
+        return exito;
+    }
+
     public Kit revisarKit() {
         boolean rta = gKits.revisarKit();
         if (rta) {
@@ -282,6 +321,31 @@ public class CentroOperaciones {
                     gUni.agregarUnidad((Unidad) ultimaOp.getEstadoAnterior());
                     return true;
                 }
+                case TECNICO_EDITADO: {
+                    Tecnico anterior = (Tecnico) ultimaOp.getEstadoAnterior();
+                    Tecnico actual = (Tecnico) ultimaOp.getEstadoActual();
+                    actual.setNombre(anterior.getNombre());
+                    actual.setEspecialidad(anterior.getEspecialidad());
+                    actual.setZona(anterior.getZona());
+                    return true;
+                }
+                case TECNICO_ELIMINADO: {
+                    gTecs.agregarTecnico((Tecnico) ultimaOp.getEstadoAnterior());
+                    return true;
+                }
+                case CLIENTE_EDITADO: {
+                    Cliente anterior = (Cliente) ultimaOp.getEstadoAnterior();
+                    Cliente actual = (Cliente) ultimaOp.getEstadoActual();
+                    actual.setNombre(anterior.getNombre());
+                    actual.setTelefono(anterior.getTelefono());
+                    actual.setPlacaVehiculo(anterior.getPlacaVehiculo());
+                    actual.setModeloVehiculo(anterior.getModeloVehiculo());
+                    return true;
+                }
+                case CLIENTE_ELIMINADO: {
+                    gClientes.agregarCliente((Cliente) ultimaOp.getEstadoAnterior());
+                    return true;
+                }
                 case UNIDAD_EDITADO: {                
                     Unidad anterior = (Unidad) ultimaOp.getEstadoAnterior();
                     Unidad actual = (Unidad) ultimaOp.getEstadoActual();
@@ -395,6 +459,26 @@ public class CentroOperaciones {
                     ));
         }
         return exito;
+    }
+
+    public boolean modificarTecnico(String id, String nombre, String especialidad, String zona) {
+        Tecnico anterior = gTecs.buscarPorId(id);
+        if (anterior == null) {
+            return false;
+        }
+        Tecnico copiaAnterior = anterior.clonar();
+        Tecnico actualizado = gTecs.modificarTecnico(id, nombre, especialidad, zona);
+        if (actualizado != null) {
+            historial.apilar(
+                    new Operacion(
+                            TipoOperacion.TECNICO_EDITADO,
+                            "Tecnico " + actualizado.getIdentificacion() + " modificado",
+                            copiaAnterior,
+                            actualizado
+                    ));
+            return true;
+        }
+        return false;
     }
 
     public boolean asignarTecnico(String id) {

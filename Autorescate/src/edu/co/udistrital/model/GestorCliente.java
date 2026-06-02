@@ -40,6 +40,16 @@ public class GestorCliente {
         });
     }
 
+    public Cliente modificarCliente(String documento, String nuevoNombre, String nuevoTelefono, String nuevaPlaca, String nuevoModelo) {
+        Cliente c = buscarPorDocumento(documento);
+        if (c == null) return null;
+        if (nuevoNombre != null && !nuevoNombre.isEmpty()) c.setNombre(nuevoNombre);
+        if (nuevoTelefono != null && !nuevoTelefono.isEmpty()) c.setTelefono(nuevoTelefono);
+        if (nuevaPlaca != null && !nuevaPlaca.isEmpty()) c.setPlacaVehiculo(nuevaPlaca);
+        if (nuevoModelo != null && !nuevoModelo.isEmpty()) c.setModeloVehiculo(nuevoModelo);
+        return c;
+    }
+
     public Lista<Cliente> obtenerTodos() {
         Lista<Cliente> lista = new ArregloLista<>();
         clientes.recorrer((cliente) -> {

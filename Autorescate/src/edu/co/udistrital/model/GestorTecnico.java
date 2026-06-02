@@ -66,6 +66,23 @@ public class GestorTecnico {
         );
     }
 
+    public Tecnico modificarTecnico(String id, String nuevoNombre, String nuevaEspecialidad, String nuevaZona) {
+        Tecnico t = buscarPorId(id);
+        if (t == null) {
+            return null;
+        }
+        if (nuevoNombre != null && !nuevoNombre.isEmpty()) {
+            t.setNombre(nuevoNombre);
+        }
+        if (nuevaEspecialidad != null && !nuevaEspecialidad.isEmpty()) {
+            t.setEspecialidad(nuevaEspecialidad);
+        }
+        if (nuevaZona != null && !nuevaZona.isEmpty()) {
+            t.setZona(nuevaZona);
+        }
+        return t;
+    }
+
     public boolean asignarTecnico(String id) {
         Tecnico t = buscarPorId(id);
         if (t != null && t.puedeAsignarse()) {

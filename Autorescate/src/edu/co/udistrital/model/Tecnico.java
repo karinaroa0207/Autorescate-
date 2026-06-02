@@ -39,6 +39,18 @@ public class Tecnico implements Clonable<Tecnico> {
         return zona;
     }
 
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public void setEspecialidad(String especialidad) {
+        this.especialidad = especialidad;
+    }
+
+    public void setZona(String zona) {
+        this.zona = zona;
+    }
+
     public EstadoTecnico getEstado() {
         return estado;
     }
