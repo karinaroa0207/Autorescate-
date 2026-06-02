@@ -1,6 +1,5 @@
 package edu.co.udistrital.view;
 
-import edu.co.udistrital.controller.VisualizadorMensajes;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
