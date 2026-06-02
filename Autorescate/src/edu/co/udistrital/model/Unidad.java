@@ -3,7 +3,7 @@ package edu.co.udistrital.model;
 import java.util.UUID;
 
 public abstract class Unidad implements Clonable<Unidad> {
-    
+
     private String id;
     private EstadoUnidad estado;
     private String zona;
@@ -18,15 +18,15 @@ public abstract class Unidad implements Clonable<Unidad> {
 
     public abstract String getTipo();
 
-    public String getId() { 
-        return id; 
+    public String getId() {
+        return id;
     }
-    
-    public EstadoUnidad getEstado() { 
-        return estado; 
+
+    public EstadoUnidad getEstado() {
+        return estado;
     }
-    
-    public void setEstado(EstadoUnidad estado) { 
+
+    public void setEstado(EstadoUnidad estado) {
         this.estado = estado;
         if (EstadoUnidad.MANTENIMIENTO == estado || EstadoUnidad.OCUPADA == estado) {
             this.disponible = false;
@@ -34,19 +34,19 @@ public abstract class Unidad implements Clonable<Unidad> {
             this.disponible = true;
         }
     }
-    
-    public String getZona() { 
-        return zona; 
+
+    public String getZona() {
+        return zona;
     }
 
     public void setZona(String zona) {
         this.zona = zona;
-    }        
-    
-    public boolean isDisponible() { 
-        return disponible; 
     }
-    
+
+    public boolean isDisponible() {
+        return disponible;
+    }
+
     public void setDisponible(boolean disponible) {
         if (EstadoUnidad.MANTENIMIENTO == estado && disponible) {
             return;
@@ -62,12 +62,22 @@ public abstract class Unidad implements Clonable<Unidad> {
     public void revertirAsignacion() {
         setDisponible(true);
     }
-    
-    public Object[] toRowDisponible() {
-        return new Object[]{id, zona, getTipo()};
+
+    public String[] toRowDisponible() {
+        return new String[]{
+            id != null ? String.valueOf(id) : "",
+            zona != null ? zona : "",
+            getTipo() != null ? getTipo() : ""
+        };
     }
-    
-    public Object[] toRow() {
-        return new Object[]{id, getTipo(), zona, estado, puedeAsignarse() ? "Si" : "No"};
+
+    public String[] toRow() {
+        return new String[]{
+            id != null ? String.valueOf(id) : "",
+            getTipo() != null ? getTipo() : "",
+            zona != null ? zona : "",
+            estado != null ? estado.toString() : "",
+            puedeAsignarse() ? "Si" : "No"
+        };
     }
 }

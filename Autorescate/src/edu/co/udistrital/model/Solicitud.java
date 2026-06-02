@@ -120,49 +120,49 @@ public class Solicitud implements MiComparable<Solicitud> {
         return 0;
     }
 
-    public Object[] toRowEjecucion() {
-        return new Object[]{
-            id,
-            cliente,
-            (unidadAsignada != null) ? unidadAsignada.getTipo() : "Sin asignar",
-            (tecnicoAsignado != null) ? tecnicoAsignado.getNombre() : "Sin asignar",
-            estado
+    public String[] toRowEjecucion() {
+        return new String[]{
+            String.valueOf(id),
+            cliente != null ? cliente : "",
+            unidadAsignada != null ? unidadAsignada.getTipo() : "Sin asignar",
+            tecnicoAsignado != null ? tecnicoAsignado.getNombre() : "Sin asignar",
+            estado != null ? estado.toString() : ""
         };
     }
 
-    public Object[] toRowPendiente() {
-        return new Object[]{
-            id,
-            cliente,
-            tipoServicio,
-            zona,
-            prioridad,
-            estado
+    public String[] toRowPendiente() {
+        return new String[]{
+            String.valueOf(id),
+            cliente != null ? cliente : "",
+            tipoServicio != null ? tipoServicio : "",
+            zona != null ? zona : "",
+            String.valueOf(prioridad),
+            estado != null ? estado.toString() : ""
         };
     }
 
-    public Object[] toRowCierre() {
-        return new Object[]{
-            id,
-            cliente,
-            tipoServicio,
-            unidadAsignada.getTipo(),
-            tecnicoAsignado.getNombre(),
-            fechaCierre.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))
+    public String[] toRowCierre() {
+        return new String[]{
+            String.valueOf(id),
+            cliente != null ? cliente : "",
+            tipoServicio != null ? tipoServicio : "",
+            unidadAsignada != null ? unidadAsignada.getTipo() : "Ninguna",
+            tecnicoAsignado != null ? tecnicoAsignado.getNombre() : "No asignado",
+            fechaCierre != null ? fechaCierre.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) : ""
         };
     }
 
     public String[] toCSVRow() {
         return new String[]{
-            String.valueOf(this.id),
-            this.cliente,
-            this.descripcion,
-            this.tipoServicio,
-            this.zona,
-            String.valueOf(this.prioridad),
-            this.unidadAsignada != null ? this.unidadAsignada.getTipo() : "Ninguna",
-            this.tecnicoAsignado != null ? this.tecnicoAsignado.getNombre() : "No asignado",
-            this.fechaCierre != null ? this.fechaCierre.toString() : ""
+            String.valueOf(id),
+            cliente != null ? cliente : "",
+            descripcion != null ? descripcion : "",
+            tipoServicio != null ? tipoServicio : "",
+            zona != null ? zona : "",
+            String.valueOf(prioridad),
+            unidadAsignada != null ? unidadAsignada.getTipo() : "Ninguna",
+            tecnicoAsignado != null ? tecnicoAsignado.getNombre() : "No asignado",
+            fechaCierre != null ? fechaCierre.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) : "" // Cambiado para que coincida con el formato visual
         };
     }
 }

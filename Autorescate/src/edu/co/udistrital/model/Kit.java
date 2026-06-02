@@ -43,23 +43,35 @@ public class Kit implements Clonable<Kit> {
     public void setEstado(EstadoKit estado) {
         this.estado = estado;
     }
-    
+
     public void revertirAsignacion() {
-        if(estado == EstadoKit.ASIGNADO) {
+        if (estado == EstadoKit.ASIGNADO) {
             estado = EstadoKit.DISPONIBLE;
         }
     }
 
-    public Object[] toRowDisponible() {
-        return new Object[]{id, codigo, descripcion};
+    public String[] toRowDisponible() {
+        return new String[]{
+            id != null ? String.valueOf(id) : "",
+            codigo != null ? codigo : "",
+            descripcion != null ? descripcion : ""
+        };
     }
-    
-    public Object[] toRow() {
-        return new Object[]{id, codigo, descripcion, estado};
+
+    public String[] toRow() {
+        return new String[]{
+            id != null ? String.valueOf(id) : "",
+            codigo != null ? codigo : "",
+            descripcion != null ? descripcion : "",
+            estado != null ? estado.toString() : ""
+        };
     }
 
     @Override
     public Kit clonar() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Kit clon = new Kit(this.codigo, this.descripcion);
+        clon.id = this.id;
+        clon.estado = this.estado;
+        return clon;
     }
 }

@@ -10,7 +10,7 @@ public class Operacion {
     private String detalle;
     private Object estadoAnterior;
     private Object estadoActual;
-    
+
     public Operacion(TipoOperacion tipo, Solicitud solicitud, Unidad unidad, Tecnico tecnico, Kit kit, String detalle) {
         this.tipo = tipo;
         this.solicitud = solicitud;
@@ -28,20 +28,20 @@ public class Operacion {
         this.kit = kit;
         this.detalle = detalle;
         this.estadoAnterior = estadoAnterior;
-    }    
-    
+    }
+
     public Operacion(TipoOperacion tipo, String detalle, Object estadoAnterior) {
         this.tipo = tipo;
         this.detalle = detalle;
         this.estadoAnterior = estadoAnterior;
-    }    
-    
+    }
+
     public Operacion(TipoOperacion tipo, String detalle, Object estadoAnterior, Object estadoActual) {
         this.tipo = tipo;
         this.detalle = detalle;
         this.estadoAnterior = estadoAnterior;
         this.estadoActual = estadoActual;
-    }        
+    }
 
     public TipoOperacion getTipo() {
         return tipo;
@@ -65,21 +65,21 @@ public class Operacion {
 
     public Object getEstadoAnterior() {
         return estadoAnterior;
-    }   
+    }
 
     public Object getEstadoActual() {
         return estadoActual;
-    }        
+    }
 
     public Kit getKit() {
         return kit;
-    }    
+    }
 
-    public Object[] toRow(int orden) {
-        return new Object[]{
-            orden,
-            tipo,
-            detalle
+    public String[] toRow(int orden) {
+        return new String[]{
+            String.valueOf(orden),
+            tipo.toString(),
+            detalle != null ? detalle : ""
         };
     }
 }

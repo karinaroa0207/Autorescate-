@@ -66,27 +66,47 @@ public class Tecnico implements Clonable<Tecnico> {
     }
 
     public void asignarTrabajo(Kit kit) {
-        this.kit = kit;       
+        this.kit = kit;
         this.libre = false;
         this.estado = EstadoTecnico.ASIGNADO;
     }
-    
+
     public void revertirAsignar() {
         this.kit = null;
         this.libre = true;
-        this.estado = EstadoTecnico.DISPONIBLE;    
+        this.estado = EstadoTecnico.DISPONIBLE;
     }
-    
-    public Object[] toRowDisponible() {
-        return new Object[]{identificacion, nombre, especialidad, zona};
+
+    public String[] toRowDisponible() {
+        return new String[]{
+            identificacion != null ? identificacion : "",
+            nombre != null ? nombre : "",
+            especialidad != null ? especialidad : "",
+            zona != null ? zona : ""
+        };
     }
-    
-    public Object[] toRow() {
-        return new Object[]{identificacion, nombre, especialidad, zona, estado, (isLibre()) ? "Si" : "No"};
+
+    public String[] toRow() {
+        return new String[]{
+            identificacion != null ? identificacion : "",
+            nombre != null ? nombre : "",
+            especialidad != null ? especialidad : "",
+            zona != null ? zona : "",
+            estado != null ? estado.toString() : "",
+            isLibre() ? "Si" : "No"
+        };
     }
 
     @Override
     public Tecnico clonar() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        Tecnico clon = new Tecnico(this.identificacion, this.nombre, this.especialidad, this.zona);
+        clon.libre = this.libre;
+        clon.estado = this.estado;
+        if (this.kit != null) {
+            clon.kit = this.kit.clonar();
+        } else {
+            clon.kit = null;
+        }
+        return clon;
     }
 }
