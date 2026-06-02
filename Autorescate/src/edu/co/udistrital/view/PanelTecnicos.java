@@ -36,6 +36,16 @@ public class PanelTecnicos extends JPanel {
         txtZonaTecnico = new JTextField(10);
         btnRegistrarTecnico = new JButton("Registrar tecnico");
 
+        JButton btnLimpiar = new JButton("Limpiar fomulario");
+        btnLimpiar.addActionListener(
+                e -> {
+                    txtIdTecnico.setText("");
+                    txtNombreTecnico.setText("");
+                    txtEspecialidad.setText("");
+                    txtZonaTecnico.setText("");
+                }
+        );
+
         formulario.add(new JLabel("ID"));
         formulario.add(txtIdTecnico);
         formulario.add(new JLabel("Nombre"));
@@ -45,13 +55,31 @@ public class PanelTecnicos extends JPanel {
         formulario.add(new JLabel("Zona"));
         formulario.add(txtZonaTecnico);
         formulario.add(btnRegistrarTecnico);
+        formulario.add(btnLimpiar);
         return formulario;
     }
 
-    public String getIdTecnico() { return txtIdTecnico.getText().trim(); }
-    public String getNombreTecnico() { return txtNombreTecnico.getText().trim(); }
-    public String getEspecialidad() { return txtEspecialidad.getText().trim(); }
-    public String getZonaTecnico() { return txtZonaTecnico.getText().trim(); }
-    public JButton getBtnRegistrarTecnico() { return btnRegistrarTecnico; }
-    public JTable getTablaTecnicos() { return tablaTecnicos; }
+    public String getIdTecnico() {
+        return txtIdTecnico.getText().trim();
+    }
+
+    public String getNombreTecnico() {
+        return txtNombreTecnico.getText().trim();
+    }
+
+    public String getEspecialidad() {
+        return txtEspecialidad.getText().trim();
+    }
+
+    public String getZonaTecnico() {
+        return txtZonaTecnico.getText().trim();
+    }
+
+    public JButton getBtnRegistrarTecnico() {
+        return btnRegistrarTecnico;
+    }
+
+    public JTable getTablaTecnicos() {
+        return tablaTecnicos;
+    }
 }

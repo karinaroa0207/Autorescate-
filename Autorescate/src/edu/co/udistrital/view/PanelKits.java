@@ -38,6 +38,12 @@ public class PanelKits extends JPanel {
         txtNombre = new JTextField(15);
         txtDescripcion = new JTextField(20);
         btnCrearKit = new JButton("Crear");
+        JButton btnLimpiar = new JButton("Limpiar fomulario");
+        btnLimpiar.addActionListener(e -> {
+            txtNombre.setText("");
+            txtDescripcion.setText("");
+            }
+        );
         btnRevisarKit = new JButton("Revisar Kit");
 
         formulario.add(new JLabel("Nombre"));
@@ -47,6 +53,7 @@ public class PanelKits extends JPanel {
         formulario.add(txtDescripcion);
 
         formulario.add(btnCrearKit);
+        formulario.add(btnLimpiar);
         formulario.add(btnRevisarKit);
 
         return formulario;
