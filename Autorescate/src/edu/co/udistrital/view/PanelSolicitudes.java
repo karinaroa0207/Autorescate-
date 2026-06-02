@@ -34,6 +34,7 @@ public class PanelSolicitudes extends JPanel {
     private JButton btnAsignarManual;
     private JTextField txtCerrarId;
     private JButton btnCerrarSolicitud;
+    private JButton btnLimpiarCerrrar;
     private JTable tablaPendientes;
     private JTable tablaEjecucion;
     private JTable tablaCerrados;
@@ -76,6 +77,8 @@ public class PanelSolicitudes extends JPanel {
         btnAsignarManual = new JButton("Asignar siguiente manual");
         txtCerrarId = new JTextField(22);
         btnCerrarSolicitud = new JButton("Cerrar caso");
+        btnLimpiarCerrrar = new JButton("Limpiar");
+        btnLimpiarCerrrar.addActionListener(e -> txtCerrarId.setText(""));
         agregarMenuContextual(txtCerrarId);
 
         agregarCampo(formulario, "Cliente", txtCliente, 0, 0);
@@ -104,6 +107,7 @@ public class PanelSolicitudes extends JPanel {
         filaCerrar.add(new JLabel("ID a cerrar:"));
         filaCerrar.add(txtCerrarId);
         filaCerrar.add(btnCerrarSolicitud);
+        filaCerrar.add(btnLimpiarCerrrar);
 
         acciones.add(filaAsignar);
         acciones.add(filaCerrar);
@@ -176,7 +180,7 @@ public class PanelSolicitudes extends JPanel {
 
     public JButton getBtnCerrarSolicitud() {
         return btnCerrarSolicitud;
-    }
+    }     
 
     public JButton getBtnAsignarManual() {
         return btnAsignarManual;
