@@ -161,6 +161,7 @@ public class ControladorPrincipal {
             Lista<Solicitud> casos = modelo.getCasosCerrados();
             ExportadorCSV.generarReporteCasosCerrados(casos);
             vista.agregarMensaje("Archivo reporte generado con éxito en la raíz del proyecto.");
+            vista.mostrarMensaje("Archivo reporte generado con éxito en la raíz del proyecto.");
         } catch (IOException ex) {
             vista.agregarMensaje("Error al escribir el archivo CSV: " + ex.getMessage());
         }
