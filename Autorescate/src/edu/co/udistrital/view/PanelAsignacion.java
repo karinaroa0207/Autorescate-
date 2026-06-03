@@ -29,6 +29,7 @@ public class PanelAsignacion extends JPanel {
     private JTable tablaUnidades;
     private JTable tablaTecnicos;
     private JTable tablaKits;
+    private JTable tablaRepuestos;
 
     private JTabbedPane tabRecursos;
 
@@ -83,10 +84,14 @@ public class PanelAsignacion extends JPanel {
         tablaKits = TablaFactory.crear(new String[]{
             "ID", "Codigo", "Descripcion"
         });
+        tablaRepuestos = TablaFactory.crear(new String[]{
+            "Codigo", "Nombre", "Cantidad"
+        });
         tabRecursos = new JTabbedPane();
         tabRecursos.addTab("Unidades disponibles", new JScrollPane(tablaUnidades));
         tabRecursos.addTab("Tecnicos disponibles", new JScrollPane(tablaTecnicos));
         tabRecursos.addTab("Kits listos", new JScrollPane(tablaKits));
+        tabRecursos.addTab("Repuestos preparados", new JScrollPane(tablaRepuestos));
         return tabRecursos;
     }
 
@@ -124,6 +129,7 @@ public class PanelAsignacion extends JPanel {
         ((DefaultTableModel) tablaTecnicos.getModel()).setRowCount(0);
         ((DefaultTableModel) tablaUnidades.getModel()).setRowCount(0);
         ((DefaultTableModel) tablaKits.getModel()).setRowCount(0);
+        ((DefaultTableModel) tablaRepuestos.getModel()).setRowCount(0);
     }
 
     public void agregarFila(String tabla, Object[] datos) {
@@ -133,6 +139,8 @@ public class PanelAsignacion extends JPanel {
             ((DefaultTableModel) tablaUnidades.getModel()).addRow(datos);
         } else if (tabla.equals("kits")) {
             ((DefaultTableModel) tablaKits.getModel()).addRow(datos);
+        } else if (tabla.equals("repuestos")) {
+            ((DefaultTableModel) tablaRepuestos.getModel()).addRow(datos);
         }
     }
 
@@ -178,6 +186,10 @@ public class PanelAsignacion extends JPanel {
 
     public JTable getTablaKits() {
         return tablaKits;
+    }
+
+    public JTable getTablaRepuestos() {
+        return tablaRepuestos;
     }
     
     

@@ -4,20 +4,17 @@ public class Repuesto {
     
     private String codigoRepuesto;
     private String nombre;
-    private double costo;
     private int stockDisponible;
 
-    public Repuesto(String codigoRepuesto, String nombre, double costo, int stockInicial) {
+    public Repuesto(String codigoRepuesto, String nombre, int stockInicial) {
         this.codigoRepuesto = codigoRepuesto;
         this.nombre = nombre;
-        this.costo = costo;
         this.stockDisponible = stockInicial;
     }
 
-    public Repuesto(String codigoRepuesto, String nombre, double costo) {
+    public Repuesto(String codigoRepuesto, String nombre) {
         this.codigoRepuesto = codigoRepuesto;
         this.nombre = nombre;
-        this.costo = costo;
         this.stockDisponible = 1;
     }
 
@@ -47,14 +44,6 @@ public class Repuesto {
         this.nombre = nombre;
     }
 
-    public double getCosto() {
-        return costo;
-    }
-
-    public void setCosto(double costo) {
-        this.costo = costo;
-    }
-
     public int getStockDisponible() {
         return stockDisponible;
     }
@@ -62,9 +51,17 @@ public class Repuesto {
     public void setStockDisponible(int stockDisponible) {
         this.stockDisponible = stockDisponible;
     }
+
+    public String[] toRowPreparado() {
+        return new String[]{
+            codigoRepuesto != null ? codigoRepuesto : "",
+            nombre != null ? nombre : "",
+            String.valueOf(stockDisponible)
+        };
+    }
     
     @Override
     public String toString() {
-        return "[" + codigoRepuesto + "] " + nombre + " - Costo: $" + costo + " (Stock: " + stockDisponible + ")";
+        return "[" + codigoRepuesto + "] " + nombre + " (Cantidad: " + stockDisponible + ")";
     }
 }

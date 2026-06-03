@@ -71,10 +71,7 @@ public class PanelSolicitudes extends JPanel {
         txtDescripcion = new JTextField(20);
         txtZonaSolicitud = new JTextField(12);
         txtPrioridad = new JTextField("0", 5);
-        cmbTipoServicio = new JComboBox<>(new String[]{
-            "Cambio de llanta", "Paso de corriente", "Grua", "Apertura de puertas",
-            "Combustible", "Revision mecanica", "Emergencia vial"
-        });
+        cmbTipoServicio = new JComboBox<>();
         btnRegistrarSolicitud = new JButton("Registrar");
         btnAsignar = new JButton("Asignar siguiente automatico");
         btnAsignarManual = new JButton("Asignar siguiente manual");
@@ -124,8 +121,8 @@ public class PanelSolicitudes extends JPanel {
 
     private JTabbedPane crearTablas() {
         tablaPendientes = TablaFactory.crear(new String[]{"ID", "Cliente", "Servicio", "Zona", "Prioridad", "Estado"});
-        tablaEjecucion = TablaFactory.crear(new String[]{"ID", "Cliente", "Unidad", "Tecnico", "Kit", "Estado"});
-        tablaCerrados = TablaFactory.crear(new String[]{"ID", "Cliente", "Servicio", "Unidad", "Tecnico", "Kit", "Cierre"});
+        tablaEjecucion = TablaFactory.crear(new String[]{"ID", "Cliente", "Unidad", "Tecnico", "Kit", "Repuesto", "Estado"});
+        tablaCerrados = TablaFactory.crear(new String[]{"ID", "Cliente", "Servicio", "Unidad", "Tecnico", "Kit", "Repuesto", "Cierre"});
         agregarMenuCopiarId(tablaPendientes);
         agregarMenuCopiarId(tablaEjecucion);
         agregarMenuCopiarId(tablaCerrados);
@@ -230,6 +227,17 @@ public class PanelSolicitudes extends JPanel {
             if (documentoSeleccionado != null && documentoSeleccionado.equals(cliente.getDocumento())) {
                 cmbCliente.setSelectedItem(cliente);
             }
+        }
+    }
+
+    public void cargarTiposServicio(Lista<String> tiposServicio) {
+        String seleccionado = getTipoServicio();
+        cmbTipoServicio.removeAllItems();
+        for (int i = 0; i < tiposServicio.size(); i++) {
+            cmbTipoServicio.addItem(tiposServicio.get(i));
+        }
+        if (seleccionado != null) {
+            cmbTipoServicio.setSelectedItem(seleccionado);
         }
     }
 

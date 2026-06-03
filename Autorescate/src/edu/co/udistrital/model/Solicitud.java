@@ -19,6 +19,7 @@ public class Solicitud implements MiComparable<Solicitud> {
     private Unidad unidadAsignada;
     private Tecnico tecnicoAsignado;
     private Kit kitAsignado;
+    private Repuesto repuestoAsignado;
     private LocalDateTime fechaRegistro;
     private LocalDateTime fechaCierre;
 
@@ -106,19 +107,28 @@ public class Solicitud implements MiComparable<Solicitud> {
         return kitAsignado;
     }
 
+    public Repuesto getRepuesto() {
+        return repuestoAsignado;
+    }
+
     public void asignarRecursos(Unidad unidad, Tecnico tecnico) {
-        asignarRecursos(unidad, tecnico, tecnico != null ? tecnico.getKit() : null);
+        asignarRecursos(unidad, tecnico, tecnico != null ? tecnico.getKit() : null, null);
     }
 
     public void asignarRecursos(Unidad unidad, Tecnico tecnico, Kit kit) {
+        asignarRecursos(unidad, tecnico, kit, null);
+    }
+
+    public void asignarRecursos(Unidad unidad, Tecnico tecnico, Kit kit, Repuesto repuesto) {
         this.unidadAsignada = unidad;
         this.tecnicoAsignado = tecnico;
         this.kitAsignado = kit;
+        this.repuestoAsignado = repuesto;
         this.estado = EstadoSolicitud.EN_PROCESO;
     }
 
     public void marcarComoAtendida() {
-        if (unidadAsignada == null || tecnicoAsignado == null || kitAsignado == null) {
+        if (unidadAsignada == null || tecnicoAsignado == null || (kitAsignado == null && repuestoAsignado == null)) {
             return;
         }
         tecnicoAsignado.setLibre(true);
@@ -131,6 +141,7 @@ public class Solicitud implements MiComparable<Solicitud> {
         this.unidadAsignada = null;
         this.tecnicoAsignado = null;
         this.kitAsignado = null;
+        this.repuestoAsignado = null;
         this.estado = EstadoSolicitud.PENDIENTE;
         this.fechaCierre = null;
     }
@@ -152,6 +163,7 @@ public class Solicitud implements MiComparable<Solicitud> {
             unidadAsignada != null ? unidadAsignada.getTipo().getDescripcion() : "Sin asignar",
             tecnicoAsignado != null ? tecnicoAsignado.getNombre() : "Sin asignar",
             kitAsignado != null ? kitAsignado.getCodigo() : "Sin kit",
+            repuestoAsignado != null ? repuestoAsignado.getCodigoRepuesto() : "Sin repuesto",
             estado != null ? estado.toString() : ""
         };
     }
@@ -175,6 +187,7 @@ public class Solicitud implements MiComparable<Solicitud> {
             unidadAsignada != null ? unidadAsignada.getTipo().getDescripcion() : "Ninguna",
             tecnicoAsignado != null ? tecnicoAsignado.getNombre() : "No asignado",
             kitAsignado != null ? kitAsignado.getCodigo() : "Sin kit",
+            repuestoAsignado != null ? repuestoAsignado.getCodigoRepuesto() : "Sin repuesto",
             fechaCierre != null ? fechaCierre.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) : ""
         };
     }
@@ -202,6 +215,8 @@ public class Solicitud implements MiComparable<Solicitud> {
             tecnicoAsignado != null ? tecnicoAsignado.getZona() : "",
             kitAsignado != null ? kitAsignado.getCodigo() : "Sin kit",
             kitAsignado != null ? kitAsignado.getDescripcion() : "",
+            repuestoAsignado != null ? repuestoAsignado.getCodigoRepuesto() : "",
+            repuestoAsignado != null ? repuestoAsignado.getNombre() : "",
             fechaRegistro != null ? fechaRegistro.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) : "",
             fechaCierre != null ? fechaCierre.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) : "" // Cambiado para que coincida con el formato visual
         };

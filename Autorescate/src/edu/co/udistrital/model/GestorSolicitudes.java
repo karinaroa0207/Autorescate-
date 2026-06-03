@@ -21,7 +21,11 @@ public class GestorSolicitudes {
     }
 
     public void agregarEnEjecucion(Solicitud solicitud, Unidad unidad, Tecnico tecnico, Kit kit) {
-        solicitud.asignarRecursos(unidad, tecnico, kit);
+        solicitud.asignarRecursos(unidad, tecnico, kit, null);
+    }
+
+    public void agregarEnEjecucion(Solicitud solicitud, Unidad unidad, Tecnico tecnico, Kit kit, Repuesto repuesto) {
+        solicitud.asignarRecursos(unidad, tecnico, kit, repuesto);
     }
 
     public void cerrar(Solicitud solicitud) {

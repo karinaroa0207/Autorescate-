@@ -15,7 +15,7 @@ public class ExportadorCSV {
         String nombreArchivo = "reporte_cierre_" + fechaActual + ".csv";
 
         try (FileWriter writer = new FileWriter(nombreArchivo, StandardCharsets.UTF_8)) {
-            writer.append("ID_Caso,Documento_Cliente,Nombre_Cliente,Telefono_Cliente,Placa_Vehiculo,Modelo_Vehiculo,Descripcion,Servicio,Zona_Solicitud,Prioridad,Es_Critica,Estado,ID_Unidad,Tipo_Unidad,Zona_Unidad,ID_Tecnico,Nombre_Tecnico,Especialidad_Tecnico,Zona_Tecnico,Codigo_Kit,Descripcion_Kit,Fecha_Registro,Fecha_Cierre\n");
+            writer.append("ID_Caso,Documento_Cliente,Nombre_Cliente,Telefono_Cliente,Placa_Vehiculo,Modelo_Vehiculo,Descripcion,Servicio,Zona_Solicitud,Prioridad,Es_Critica,Estado,ID_Unidad,Tipo_Unidad,Zona_Unidad,ID_Tecnico,Nombre_Tecnico,Especialidad_Tecnico,Zona_Tecnico,Codigo_Kit,Descripcion_Kit,Codigo_Repuesto,Nombre_Repuesto,Fecha_Registro,Fecha_Cierre\n");
 
             for (int i = 0; i < casos.size(); i++) {
                 Solicitud s = casos.get(i);                

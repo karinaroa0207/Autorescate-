@@ -5,12 +5,14 @@ import edu.co.udistrital.model.Cliente;
 import edu.co.udistrital.model.ExportadorCSV;
 import edu.co.udistrital.model.GestorCliente;
 import edu.co.udistrital.model.GestorKits;
+import edu.co.udistrital.model.GestorRepuestos;
 import edu.co.udistrital.model.GestorSolicitudes;
 import edu.co.udistrital.model.GestorTecnico;
 import edu.co.udistrital.model.GestorUnidad;
 import edu.co.udistrital.model.Kit;
 import edu.co.udistrital.model.Lista;
 import edu.co.udistrital.model.Operacion;
+import edu.co.udistrital.model.Repuesto;
 import edu.co.udistrital.model.Solicitud;
 import edu.co.udistrital.model.Tecnico;
 import edu.co.udistrital.model.UnidadFactory;
@@ -32,6 +34,7 @@ public class ControladorPrincipal {
     private ControlSolicitudes cSolicitudes;
     private ControlUnidades cUnidades;
     private ControlClientes cClientes;
+    private ControlRepuestos cRepuestos;
 
     public ControladorPrincipal() {
         GestorKits gkits = new GestorKits();
@@ -39,12 +42,14 @@ public class ControladorPrincipal {
         GestorSolicitudes gSol = new GestorSolicitudes();
         GestorUnidad gUni = new GestorUnidad();
         GestorCliente gClientes = new GestorCliente();
+        GestorRepuestos gRepuestos = new GestorRepuestos();
 
-        this.modelo = new CentroOperaciones(gkits, gTec, gSol, gUni, gClientes);
+        this.modelo = new CentroOperaciones(gkits, gTec, gSol, gUni, gClientes, gRepuestos);
         this.vista = new VentanaPrincipal();
 
         this.cClientes = new ControlClientes(vista.getPanelClientes(), vista.getPanelSolicitudes(), modelo, vista);
         this.cInventario = new ControlInventario(vista.getPanelKits(), modelo, vista);
+        this.cRepuestos = new ControlRepuestos(vista.getPanelRepuestos(), modelo, vista);
         this.cTecnico = new ControlTecnico(vista.getPanelTecnicos(), modelo, vista);
         this.cSolicitudes = new ControlSolicitudes(vista.getPanelSolicitudes(), modelo, vista);
         this.cUnidades = new ControlUnidades(vista.getPanelRecursos(), modelo, vista);
@@ -73,6 +78,9 @@ public class ControladorPrincipal {
                     cInventario.actualizarTabla();
                     break;
                 case 5:
+                    cRepuestos.actualizarTabla();
+                    break;
+                case 6:
                     llenarHistorial();
                     break;
                 default:
@@ -106,6 +114,8 @@ public class ControladorPrincipal {
         modelo.registrarSolicitud(new Solicitud(aseguradora, "Bus averiado con pasajeros en carretera", "Norte", "Grua", 95));
         modelo.agregarKit(new Kit("KIT-001", "Herramientas"));
         modelo.agregarKit(new Kit("KIT-002", "Llantas"));
+        modelo.prepararRepuesto(new Repuesto("REP-001", "Bateria auxiliar"));
+        modelo.prepararRepuesto(new Repuesto("REP-002", "Fusible de emergencia"));
         vista.agregarMensaje("Sistema inicializado con datos de prueba.");
     }
 
@@ -131,6 +141,7 @@ public class ControladorPrincipal {
         cClientes.actualizarTabla();
         cClientes.actualizarSelectorSolicitudes();
         cInventario.actualizarTabla();
+        cRepuestos.actualizarTabla();
         cTecnico.actualizarTabla();
         cSolicitudes.actualizarRecursos();
         cUnidades.actualizarTabla();

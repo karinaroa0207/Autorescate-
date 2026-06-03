@@ -7,6 +7,7 @@ public class Operacion {
     private Unidad unidad;
     private Tecnico tecnico;
     private Kit kit;
+    private Repuesto repuesto;
     private String detalle;
     private Object estadoAnterior;
     private Object estadoActual;
@@ -17,6 +18,16 @@ public class Operacion {
         this.unidad = unidad;
         this.tecnico = tecnico;
         this.kit = kit;
+        this.detalle = detalle;
+    }
+
+    public Operacion(TipoOperacion tipo, Solicitud solicitud, Unidad unidad, Tecnico tecnico, Kit kit, Repuesto repuesto, String detalle) {
+        this.tipo = tipo;
+        this.solicitud = solicitud;
+        this.unidad = unidad;
+        this.tecnico = tecnico;
+        this.kit = kit;
+        this.repuesto = repuesto;
         this.detalle = detalle;
     }
 
@@ -73,6 +84,10 @@ public class Operacion {
 
     public Kit getKit() {
         return kit;
+    }
+
+    public Repuesto getRepuesto() {
+        return repuesto;
     }
 
     public String[] toRow(int orden) {
