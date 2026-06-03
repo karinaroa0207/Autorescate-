@@ -88,7 +88,7 @@ public class ControladorPrincipal {
         vista.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                generarCSV();
+                generarCSV(false);
             }
         });
     }
@@ -119,7 +119,7 @@ public class ControladorPrincipal {
 
     private void inicializarEventos() {
         vista.getBtnDeshacer().addActionListener(e -> deshacer());
-        vista.getBtnExportar().addActionListener(e -> generarCSV());
+        vista.getBtnExportar().addActionListener(e -> generarCSV(true));
         vista.getBtnActualizar().addActionListener(e -> actualizarVistas());
     }
 
@@ -156,12 +156,14 @@ public class ControladorPrincipal {
         }
     }
 
-    private void generarCSV() {
+    private void generarCSV(boolean avisar) {
         try {
             Lista<Solicitud> casos = modelo.getCasosCerrados();
             ExportadorCSV.generarReporteCasosCerrados(casos);
-            vista.agregarMensaje("Archivo reporte generado con éxito en la raíz del proyecto.");
-            vista.mostrarMensaje("Archivo reporte generado con éxito en la raíz del proyecto.");
+            vista.agregarMensaje("Archivo reporte generado con éxito en carpeta reportes del proyecto.");            
+            if(avisar) {
+                vista.mostrarMensaje("Archivo reporte generado con éxito en carpeta reportes del proyecto.");            
+            }
         } catch (IOException ex) {
             vista.agregarMensaje("Error al escribir el archivo CSV: " + ex.getMessage());
         }
