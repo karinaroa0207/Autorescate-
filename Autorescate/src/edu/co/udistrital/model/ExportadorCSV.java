@@ -3,6 +3,8 @@ package edu.co.udistrital.model;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -12,14 +14,16 @@ public class ExportadorCSV {
     private static final DateTimeFormatter FORMATO_FECHA_CSV = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
     public static void generarReporteCasosCerrados(Lista<Solicitud> casos) throws IOException {
+        String carpeta = "reportes";
+        Files.createDirectories(Paths.get(carpeta));
         String fechaActual = LocalDateTime.now().format(FORMATO_FECHA);
-        String nombreArchivo = "reporte_cierre_" + fechaActual + ".csv";
+        String nombreArchivo = carpeta + "/reporte_cierre_" + fechaActual + ".csv";
 
         try (FileWriter writer = new FileWriter(nombreArchivo, StandardCharsets.UTF_8)) {
             writer.append("ID_Caso,Documento_Cliente,Nombre_Cliente,Telefono_Cliente,Placa_Vehiculo,Modelo_Vehiculo,Descripcion,Servicio,Zona_Solicitud,Prioridad,Es_Critica,Estado,ID_Unidad,Tipo_Unidad,Zona_Unidad,ID_Tecnico,Nombre_Tecnico,Especialidad_Tecnico,Zona_Tecnico,Codigo_Kit,Descripcion_Kit,Codigo_Repuesto,Nombre_Repuesto,Fecha_Registro,Fecha_Cierre\n");
 
             for (int i = 0; i < casos.size(); i++) {
-                Solicitud s = casos.get(i);                
+                Solicitud s = casos.get(i);
                 String[] fila = filaCSV(s);
                 for (int j = 0; j < fila.length; j++) {
                     writer.append(limpiarTexto(fila[j]));
