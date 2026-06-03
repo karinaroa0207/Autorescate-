@@ -124,8 +124,9 @@ public class ControladorPrincipal {
     }
 
     private void deshacer() {
-        if (modelo.deshacerUltimaOperacion()) {
-            vista.agregarMensaje("Operacion reciente revertida.");
+        String rta = modelo.deshacerUltimaOperacion();
+        if (!rta.isEmpty()) {
+            vista.agregarMensaje("Operacion reciente revertida("+rta+")");
         } else {
             vista.agregarMensaje("No hay asignaciones o cierres recientes para revertir.");
         }

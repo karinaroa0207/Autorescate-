@@ -164,12 +164,12 @@ public class CentroOperaciones {
                 || !zonaCoincide(tecnicoDisponible.getZona(), solicitud.getZona())) {
             return false;
         }
-        
+
         Kit kitDisponible = gKits.despacharKit();
         if (kitDisponible == null) {
             return false;
         }
-        Repuesto repuestoDisponible = null;        
+        Repuesto repuestoDisponible = null;
         ultimoDetalleDespacho = detalleRecursoRapido(kitDisponible, repuestoDisponible);
 
         solicitud = gSol.obtenerSiguiente();
@@ -214,7 +214,7 @@ public class CentroOperaciones {
                 || !zonaCoincide(tecnicoDisponible.getZona(), solicitud.getZona())) {
             return false;
         }
-        
+
         Kit kitDisponible = gKits.despacharKit();
         if (kitDisponible == null) {
             return false;
@@ -294,14 +294,14 @@ public class CentroOperaciones {
                     new Operacion(
                             TipoOperacion.UNIDAD_ELIMINADO,
                             "Eliminada unidad " + seleccionada.getId(),
-                            seleccionada                        
+                            seleccionada
                     ));
         }
         return exito;
     }
 
     public boolean modificarUnidad(String id, String nuevaZona, EstadoUnidad nuevoEstado) {
-        Unidad anterior = gUni.buscarPorId(id);      
+        Unidad anterior = gUni.buscarPorId(id);
         if (anterior == null) {
             return false;
         }
@@ -323,7 +323,7 @@ public class CentroOperaciones {
         return gUni.buscarPorId(id);
     }
 
-    public boolean deshacerUltimaOperacion() {
+    public String deshacerUltimaOperacion() {
 
         while (!historial.estaVacia()) {
             Operacion ultimaOp = historial.desapilar();
@@ -331,7 +331,7 @@ public class CentroOperaciones {
             switch (ultimaOp.getTipo()) {
                 case SOLICITUD_CREADO: {
                     gSol.revertirCreracion((Solicitud) ultimaOp.getEstadoAnterior());
-                    return true;
+                    break;
                 }
                 case ASIGNACION: {
                     Solicitud solicitud = ultimaOp.getSolicitud();
@@ -349,7 +349,7 @@ public class CentroOperaciones {
                         exito = gRepuestos.revertirDespacho(repuesto) && exito;
                     }
                     gSol.revertirAsignacion(solicitud);
-                    return exito;
+                    break;
                 }
                 case CIERRE: {
                     Solicitud solicitud = ultimaOp.getSolicitud();
@@ -364,48 +364,48 @@ public class CentroOperaciones {
                     tecnico.asignarTrabajo(kit);
                     solicitud.asignarRecursos(ultimaOp.getUnidad(), ultimaOp.getTecnico(), kit, ultimaOp.getRepuesto());
                     gSol.revertirCierre(solicitud);
-                    return true;
-                }              
+                    break;
+                }
                 case TECNICO_CREADO: {
                     gTecs.eliminar(((Tecnico) ultimaOp.getEstadoAnterior()).getIdentificacion());
-                    return true;
+                    break;
                 }
                 case TECNICO_EDITADO: {
                     Tecnico anterior = (Tecnico) ultimaOp.getEstadoAnterior();
                     Tecnico actual = (Tecnico) ultimaOp.getEstadoActual();
                     actual.actualizarDatos(anterior.getNombre(), anterior.getEspecialidad(), anterior.getZona());
-                    return true;
+                    break;
                 }
                 case TECNICO_ELIMINADO: {
                     gTecs.agregarTecnico((Tecnico) ultimaOp.getEstadoAnterior());
-                    return true;
+                    break;
                 }
                 case UNIDAD_CREADO: {
                     gUni.eliminarUnidad(((Unidad) ultimaOp.getEstadoAnterior()).getId());
-                    return true;
-                }       
+                    break;
+                }
                 case KIT_CREADO: {
                     gKits.revertirCreacion();
-                    return true;
+                    break;
                 }
                 case KIT_REVISADO: {
                     gKits.revertirRevision((Kit) ultimaOp.getEstadoAnterior());
-                    return true;
+                    break;
                 }
                 case UNIDAD_ELIMINADO: {
                     gUni.agregarUnidad((Unidad) ultimaOp.getEstadoAnterior());
-                    return true;
+                    break;
                 }
-                case UNIDAD_EDITADO: {                
+                case UNIDAD_EDITADO: {
                     Unidad anterior = (Unidad) ultimaOp.getEstadoAnterior();
                     Unidad actual = (Unidad) ultimaOp.getEstadoActual();
                     actual.setEstado(anterior.getEstado());
                     actual.setZona(anterior.getZona());
-                    return true;
+                    break;
                 }
                 case CLIENTE_CREADO: {
                     gClientes.eliminarCliente(((Cliente) ultimaOp.getEstadoAnterior()).getDocumento());
-                    return true;
+                    break;
                 }
                 case CLIENTE_EDITADO: {
                     Cliente anterior = (Cliente) ultimaOp.getEstadoAnterior();
@@ -416,23 +416,24 @@ public class CentroOperaciones {
                             anterior.getPlacaVehiculo(),
                             anterior.getModeloVehiculo()
                     );
-                    return true;
+                    break;
                 }
                 case CLIENTE_ELIMINADO: {
                     gClientes.agregarCliente((Cliente) ultimaOp.getEstadoAnterior());
-                    return true;
+                    break;
                 }
                 case REPUESTO_PREPARADO: {
                     gRepuestos.revertirPreparacion(ultimaOp.getRepuesto());
-                    return true;
+                    break;
                 }
-                
+
                 default:
                     break;
             }
+            return ultimaOp.getDetalle();
         }
 
-        return false;
+        return "";
     }
 
     private Unidad buscarUnidadDisponible() {
@@ -491,7 +492,7 @@ public class CentroOperaciones {
     public Lista<Kit> getKitsDisponibles() {
         return gKits.getKitsListos();
     }
-    
+
     public Lista<Kit> getKitsRevision() {
         return gKits.getKitsEnRevision();
     }
