@@ -52,14 +52,6 @@ public class Repuesto {
         this.stockDisponible = stockDisponible;
     }
 
-    public String[] toRowPreparado() {
-        return new String[]{
-            codigoRepuesto != null ? codigoRepuesto : "",
-            nombre != null ? nombre : "",
-            String.valueOf(stockDisponible)
-        };
-    }
-    
     @Override
     public String toString() {
         return "[" + codigoRepuesto + "] " + nombre + " (Cantidad: " + stockDisponible + ")";

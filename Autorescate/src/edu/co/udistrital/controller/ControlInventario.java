@@ -62,7 +62,7 @@ public class ControlInventario {
         TablaUtils.limpiarTabla(vista.getTablaKits());        
         for (int i = 0; i < kits.size(); i++) {
             Kit kit = kits.get(i);
-            TablaUtils.agregarFila(vista.getTablaKits(), kit.toRow());
+            TablaUtils.agregarFila(vista.getTablaKits(), FilasTabla.kit(kit));
         }        
     }
 

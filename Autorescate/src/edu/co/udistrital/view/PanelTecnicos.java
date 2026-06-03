@@ -8,7 +8,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.ListSelectionModel;
 
 public class PanelTecnicos extends JPanel {
 
@@ -17,6 +17,8 @@ public class PanelTecnicos extends JPanel {
     private JTextField txtEspecialidad;
     private JTextField txtZonaTecnico;
     private JButton btnRegistrarTecnico;
+    private JButton btnModificarTecnico;
+    private JButton btnEliminarTecnico;
     private JTable tablaTecnicos;
 
     public PanelTecnicos() {
@@ -24,6 +26,7 @@ public class PanelTecnicos extends JPanel {
         setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
         add(crearFormulario(), BorderLayout.NORTH);
         tablaTecnicos = TablaFactory.crear(new String[]{"ID", "Nombre", "Especialidad", "Zona", "Estado", "Libre"});
+        tablaTecnicos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         add(new JScrollPane(tablaTecnicos), BorderLayout.CENTER);
     }
 
@@ -35,14 +38,14 @@ public class PanelTecnicos extends JPanel {
         txtEspecialidad = new JTextField(12);
         txtZonaTecnico = new JTextField(10);
         btnRegistrarTecnico = new JButton("Registrar tecnico");
+        btnModificarTecnico = new JButton("Modificar");
+        btnEliminarTecnico = new JButton("Eliminar");
 
-        JButton btnLimpiar = new JButton("Limpiar fomulario");
+        JButton btnLimpiar = new JButton("Limpiar formulario");
         btnLimpiar.addActionListener(
                 e -> {
-                    txtIdTecnico.setText("");
-                    txtNombreTecnico.setText("");
-                    txtEspecialidad.setText("");
-                    txtZonaTecnico.setText("");
+                    limpiarFormulario();
+                    modoRegistro();
                 }
         );
 
@@ -55,6 +58,8 @@ public class PanelTecnicos extends JPanel {
         formulario.add(new JLabel("Zona"));
         formulario.add(txtZonaTecnico);
         formulario.add(btnRegistrarTecnico);
+        formulario.add(btnModificarTecnico);
+        formulario.add(btnEliminarTecnico);
         formulario.add(btnLimpiar);
         return formulario;
     }
@@ -79,7 +84,60 @@ public class PanelTecnicos extends JPanel {
         return btnRegistrarTecnico;
     }
 
+    public JButton getBtnModificarTecnico() {
+        return btnModificarTecnico;
+    }
+
+    public JButton getBtnEliminarTecnico() {
+        return btnEliminarTecnico;
+    }
+
     public JTable getTablaTecnicos() {
         return tablaTecnicos;
+    }
+
+    public void setIdTecnico(String id) {
+        txtIdTecnico.setText(id);
+    }
+
+    public void setNombreTecnico(String nombre) {
+        txtNombreTecnico.setText(nombre);
+    }
+
+    public void setEspecialidad(String especialidad) {
+        txtEspecialidad.setText(especialidad);
+    }
+
+    public void setZonaTecnico(String zona) {
+        txtZonaTecnico.setText(zona);
+    }
+
+    public void modoRegistro() {
+        btnRegistrarTecnico.setText("Registrar tecnico");
+        txtIdTecnico.setEnabled(true);
+        revalidate();
+        repaint();
+    }
+
+    public void modoEdicion() {
+        btnRegistrarTecnico.setText("Guardar cambios");
+        txtIdTecnico.setEnabled(false);
+        revalidate();
+        repaint();
+    }
+
+    public void limpiarFormulario() {
+        txtIdTecnico.setText("");
+        txtNombreTecnico.setText("");
+        txtEspecialidad.setText("");
+        txtZonaTecnico.setText("");
+    }
+
+    public String getIdTecnicoSeleccionadoEnTabla() {
+        int filaSeleccionada = tablaTecnicos.getSelectedRow();
+        if (filaSeleccionada == -1) {
+            return null;
+        }
+        return tablaTecnicos.getValueAt(filaSeleccionada, 0).toString();
     }
 }

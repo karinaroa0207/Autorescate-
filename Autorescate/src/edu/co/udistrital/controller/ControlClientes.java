@@ -13,16 +13,20 @@ public class ControlClientes {
     private PanelSolicitudes panelSolicitudes;
     private CentroOperaciones modelo;
     private VisualizadorMensajes vMensajes;
+    private boolean modoRegistro;
 
     public ControlClientes(PanelClientes vista, PanelSolicitudes panelSolicitudes, CentroOperaciones modelo, VisualizadorMensajes vMensajes) {
         this.vista = vista;
         this.panelSolicitudes = panelSolicitudes;
         this.modelo = modelo;
         this.vMensajes = vMensajes;
-        this.vista.getBtnRegistrarCliente().addActionListener(e -> registrarCliente());
+        this.modoRegistro = true;
+        this.vista.getBtnRegistrarCliente().addActionListener(e -> guardarCliente());
+        this.vista.getBtnModificarCliente().addActionListener(e -> cargarParaModificar());
+        this.vista.getBtnEliminarCliente().addActionListener(e -> eliminarSeleccionado());
     }
 
-    public void registrarCliente() {
+    public void guardarCliente() {
         String documento = vista.getDocumento();
         String nombre = vista.getNombre();
         String telefono = valorPorDefecto(vista.getTelefono(), "Sin telefono");
@@ -33,11 +37,19 @@ public class ControlClientes {
             vMensajes.mostrarMensajeError("El cliente debe tener documento y nombre.", "Error Campo");
             return;
         }
+
+        if (modoRegistro) {
+            registrarCliente(documento, nombre, telefono, placa, modeloVehiculo);
+        } else {
+            modificarCliente(documento, nombre, telefono, placa, modeloVehiculo);
+        }
+    }
+
+    public void registrarCliente(String documento, String nombre, String telefono, String placa, String modeloVehiculo) {
         if (modelo.buscarClientePorDocumento(documento) != null) {
             vMensajes.mostrarMensaje("Ya existe un cliente con ese documento.", "Info");
             return;
         }
-
         Cliente cliente = new Cliente(documento, nombre, telefono, placa, modeloVehiculo);
         modelo.registrarCliente(cliente);
         vista.limpiarFormulario();
@@ -46,16 +58,72 @@ public class ControlClientes {
         vMensajes.mostrarMensaje("Cliente " + nombre + " registrado.", "Exito");
     }
 
+    public void modificarCliente(String documento, String nombre, String telefono, String placa, String modeloVehiculo) {
+        if (modelo.modificarCliente(documento, nombre, telefono, placa, modeloVehiculo)) {
+            vista.limpiarFormulario();
+            vista.modoRegistro();
+            modoRegistro = true;
+            actualizarTabla();
+            actualizarSelectorSolicitudes();
+            vMensajes.mostrarMensaje("Cliente " + nombre + " actualizado.", "Info");
+            return;
+        }
+        vMensajes.mostrarMensaje("No se encontro el cliente seleccionado.", "Info");
+    }
+
+    public void cargarParaModificar() {
+        String documentoSeleccionado = vista.getDocumentoSeleccionadoEnTabla();
+        if (documentoSeleccionado == null || documentoSeleccionado.isEmpty()) {
+            vMensajes.mostrarMensaje("Seleccione un cliente de la tabla para modificar.", "Info");
+            return;
+        }
+        Cliente cliente = modelo.buscarClientePorDocumento(documentoSeleccionado);
+        if (cliente != null) {
+            vista.setDocumento(cliente.getDocumento());
+            vista.setNombre(cliente.getNombre());
+            vista.setTelefono(cliente.getTelefono());
+            vista.setPlaca(cliente.getPlacaVehiculo());
+            vista.setModelo(cliente.getModeloVehiculo());
+            vista.modoEdicion();
+            modoRegistro = false;
+        }
+    }
+
+    public void eliminarSeleccionado() {
+        String documentoSeleccionado = vista.getDocumentoSeleccionadoEnTabla();
+        if (documentoSeleccionado == null || documentoSeleccionado.isEmpty()) {
+            vMensajes.mostrarMensaje("Seleccione un cliente de la tabla para eliminar.", "Info");
+            return;
+        }
+        Cliente eliminado = modelo.eliminarCliente(documentoSeleccionado);
+        if (eliminado != null) {
+            vista.limpiarFormulario();
+            vista.modoRegistro();
+            modoRegistro = true;
+            actualizarTabla();
+            actualizarSelectorSolicitudes();
+            vMensajes.mostrarMensaje("Cliente eliminado con exito.", "Info");
+            return;
+        }
+        vMensajes.mostrarMensaje("No se encontro el cliente seleccionado.", "Info");
+    }
+
     public void actualizarTabla() {
         TablaUtils.limpiarTabla(vista.getTablaClientes());
         Lista<Cliente> clientes = modelo.getClientes();
         for (int i = 0; i < clientes.size(); i++) {
-            TablaUtils.agregarFila(vista.getTablaClientes(), clientes.get(i).toRow());
+            TablaUtils.agregarFila(vista.getTablaClientes(), FilasTabla.cliente(clientes.get(i)));
         }
     }
 
     public void actualizarSelectorSolicitudes() {
-        panelSolicitudes.cargarClientes(modelo.getClientes());
+        Lista<Cliente> clientes = modelo.getClientes();
+        String[] opciones = new String[clientes.size()];
+        for (int i = 0; i < clientes.size(); i++) {
+            Cliente cliente = clientes.get(i);
+            opciones[i] = cliente.getDocumento() + " - " + cliente.getNombre();
+        }
+        panelSolicitudes.cargarClientes(opciones);
     }
 
     private String valorPorDefecto(String texto, String defecto) {

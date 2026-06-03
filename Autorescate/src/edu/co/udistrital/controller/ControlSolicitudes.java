@@ -24,7 +24,7 @@ public class ControlSolicitudes {
         this.pAsig = vista.getPanelAsignacion();
         this.modelo = modelo;
         this.vMensajes = vMensajes;
-        vista.cargarTiposServicio(modelo.getTiposServicio());
+        vista.cargarTiposServicio(aArreglo(modelo.getTiposServicio()));
         vista.getBtnRegistrarSolicitud().addActionListener(e -> registrarSolicitud());
         vista.getBtnAsignar().addActionListener(e -> asignarSiguiente());
         vista.getBtnAsignarManual().addActionListener(e
@@ -74,7 +74,7 @@ public class ControlSolicitudes {
         TablaUtils.limpiarTabla(pAsig.getTablaUnidades());
         for (int i = 0; i < u.size(); i++) {
             Unidad s = u.get(i);
-            TablaUtils.agregarFila(pAsig.getTablaUnidades(), s.toRowDisponible());
+            TablaUtils.agregarFila(pAsig.getTablaUnidades(), FilasTabla.unidadDisponible(s));
         }
         Lista<Tecnico> t = solicitud != null
                 ? modelo.getTecnicosDisponibles(solicitud.getZona())
@@ -82,24 +82,24 @@ public class ControlSolicitudes {
         TablaUtils.limpiarTabla(pAsig.getTablaTecnicos());
         for (int i = 0; i < t.size(); i++) {
             Tecnico s = t.get(i);
-            TablaUtils.agregarFila(pAsig.getTablaTecnicos(), s.toRowDisponible());
+            TablaUtils.agregarFila(pAsig.getTablaTecnicos(), FilasTabla.tecnicoDisponible(s));
         }
         Lista<Kit> kits = modelo.getKitsDisponibles();
         TablaUtils.limpiarTabla(pAsig.getTablaKits());
         for (int i = 0; i < kits.size(); i++) {
             Kit kit = kits.get(i);
-            TablaUtils.agregarFila(pAsig.getTablaKits(), kit.toRowDisponible());
+            TablaUtils.agregarFila(pAsig.getTablaKits(), FilasTabla.kitDisponible(kit));
         }
         Lista<Repuesto> repuestos = modelo.getRepuestosPreparados();
         TablaUtils.limpiarTabla(pAsig.getTablaRepuestos());
         for (int i = 0; i < repuestos.size(); i++) {
             Repuesto repuesto = repuestos.get(i);
-            TablaUtils.agregarFila(pAsig.getTablaRepuestos(), repuesto.toRowPreparado());
+            TablaUtils.agregarFila(pAsig.getTablaRepuestos(), FilasTabla.repuestoPreparado(repuesto));
         }
     }
 
     public void registrarSolicitud() {
-        Cliente cliente = vista.getClienteSeleccionado();
+        Cliente cliente = modelo.buscarClientePorDocumento(vista.getDocumentoClienteSeleccionado());
         String descripcion = vista.getDescripcion();
         String zona = valorPorDefecto(vista.getZonaSolicitud(), "General");
         String servicio = vista.getTipoServicio();
@@ -206,7 +206,7 @@ public class ControlSolicitudes {
         Lista<Solicitud> lista = modelo.getSolicitudesPendientes();
         for (int i = 0; i < lista.size(); i++) {
             Solicitud s = lista.get(i);
-            TablaUtils.agregarFila(vista.getTablaPendientes(), s.toRowPendiente());
+            TablaUtils.agregarFila(vista.getTablaPendientes(), FilasTabla.solicitudPendiente(s));
         }
     }
 
@@ -215,7 +215,7 @@ public class ControlSolicitudes {
         Lista<Solicitud> lista = modelo.getCasosEnEjecucion();
         for (int i = 0; i < lista.size(); i++) {
             Solicitud s = lista.get(i);
-            TablaUtils.agregarFila(vista.getTablaEjecucion(), s.toRowEjecucion());
+            TablaUtils.agregarFila(vista.getTablaEjecucion(), FilasTabla.solicitudEjecucion(s));
         }
     }
 
@@ -224,7 +224,15 @@ public class ControlSolicitudes {
         Lista<Solicitud> lista = modelo.getCasosCerrados();
         for (int i = 0; i < lista.size(); i++) {
             Solicitud s = lista.get(i);
-            TablaUtils.agregarFila(vista.getTablaCerrados(), s.toRowCierre());
+            TablaUtils.agregarFila(vista.getTablaCerrados(), FilasTabla.solicitudCierre(s));
         }
     }    
+
+    private String[] aArreglo(Lista<String> lista) {
+        String[] datos = new String[lista.size()];
+        for (int i = 0; i < lista.size(); i++) {
+            datos[i] = lista.get(i);
+        }
+        return datos;
+    }
 }

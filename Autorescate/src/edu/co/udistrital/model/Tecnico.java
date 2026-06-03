@@ -61,6 +61,12 @@ public class Tecnico implements Clonable<Tecnico> {
         return kit;
     }
 
+    public void actualizarDatos(String nombre, String especialidad, String zona) {
+        this.nombre = nombre;
+        this.especialidad = especialidad;
+        this.zona = zona;
+    }
+
     public void setKit(Kit kit) {
         this.kit = kit;
     }
@@ -75,26 +81,6 @@ public class Tecnico implements Clonable<Tecnico> {
         this.kit = null;
         this.libre = true;
         this.estado = EstadoTecnico.DISPONIBLE;
-    }
-
-    public String[] toRowDisponible() {
-        return new String[]{
-            identificacion != null ? identificacion : "",
-            nombre != null ? nombre : "",
-            especialidad != null ? especialidad : "",
-            zona != null ? zona : ""
-        };
-    }
-
-    public String[] toRow() {
-        return new String[]{
-            identificacion != null ? identificacion : "",
-            nombre != null ? nombre : "",
-            especialidad != null ? especialidad : "",
-            zona != null ? zona : "",
-            estado != null ? estado.toString() : "",
-            isLibre() ? "Si" : "No"
-        };
     }
 
     @Override

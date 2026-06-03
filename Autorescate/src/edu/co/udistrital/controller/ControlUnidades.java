@@ -62,7 +62,7 @@ public class ControlUnidades {
         Unidad u = gestor.buscarUnidad(idSeleccionado);
         if (u != null) {
             vista.setZonaUnidad(u.getZona());
-            vista.setTipoUnidad(u.getTipo());
+            vista.setTipoUnidad(u.getTipo().toString());
             vista.setEstadoUnidad(u.getEstado().toString());
             vista.setId(idSeleccionado);
             vista.modoEdicion();
@@ -95,7 +95,7 @@ public class ControlUnidades {
         Lista<Unidad> lista = gestor.getUnidades();
         for (int i = 0; i < lista.size(); i++) {
             Unidad obj = lista.get(i);
-            TablaUtils.agregarFila(vista.getTablaUnidades(), obj.toRow());
+            TablaUtils.agregarFila(vista.getTablaUnidades(), FilasTabla.unidad(obj));
         }
     }
 }

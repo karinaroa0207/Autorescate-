@@ -1,7 +1,5 @@
 package edu.co.udistrital.view;
 
-import edu.co.udistrital.model.EstadoUnidad;
-import edu.co.udistrital.model.TipoVehiculo;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -15,7 +13,7 @@ import javax.swing.ListSelectionModel;
 
 public class PanelRecursos extends JPanel {
 
-    private JComboBox<TipoVehiculo> cmbTipoUnidad;
+    private JComboBox<String> cmbTipoUnidad;
     private JTextField txtZonaUnidad;
     private JButton btnRegistrarUnidad;
     private JLabel lblId;
@@ -47,9 +45,9 @@ public class PanelRecursos extends JPanel {
 
         JPanel filaCampos = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
 
-        cmbTipoUnidad = new JComboBox<>(TipoVehiculo.values());
+        cmbTipoUnidad = new JComboBox<>(new String[]{"Grua", "Moto de apoyo", "Camioneta", "Vehiculo liviano"});
         txtZonaUnidad = new JTextField(14);
-        cmbEstadoUnidad = new JComboBox<>(new String[]{EstadoUnidad.DISPONIBLE.toString(), EstadoUnidad.MANTENIMIENTO.toString(), EstadoUnidad.OCUPADA.toString()});
+        cmbEstadoUnidad = new JComboBox<>(new String[]{"DISPONIBLE", "MANTENIMIENTO", "OCUPADA"});
 
         btnRegistrarUnidad = new JButton("Registrar unidad");
         btnModificarUnidad = new JButton("Modificar");
@@ -98,7 +96,7 @@ public class PanelRecursos extends JPanel {
 
     public void setId(String id) { lblId.setText(id); }
     public void setZonaUnidad(String zona) { txtZonaUnidad.setText(zona); }
-    public void setTipoUnidad(TipoVehiculo tipo) { cmbTipoUnidad.setSelectedItem(tipo); }
+    public void setTipoUnidad(String tipo) { cmbTipoUnidad.setSelectedItem(tipo); }
     public void setEstadoUnidad(String estado) { cmbEstadoUnidad.setSelectedItem(estado); }
 
     public JButton getBtnRegistrarUnidad() { return btnRegistrarUnidad; }
@@ -106,7 +104,7 @@ public class PanelRecursos extends JPanel {
     public JButton getBtnEliminarUnidad() { return btnEliminarUnidad; }
     public JTable getTablaUnidades() { return tablaUnidades; }
     
-    public JComboBox<TipoVehiculo> getCmbTipoUnidad() { return cmbTipoUnidad; }
+    public JComboBox<String> getCmbTipoUnidad() { return cmbTipoUnidad; }
 
     public void limpiarFormularioUnidades() {
         txtZonaUnidad.setText("");

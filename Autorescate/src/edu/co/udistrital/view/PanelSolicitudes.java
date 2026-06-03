@@ -1,7 +1,5 @@
 package edu.co.udistrital.view;
 
-import edu.co.udistrital.model.Cliente;
-import edu.co.udistrital.model.Lista;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -26,7 +24,7 @@ import javax.swing.text.DefaultEditorKit;
 
 public class PanelSolicitudes extends JPanel {
 
-    private JComboBox<Cliente> cmbCliente;
+    private JComboBox<String> cmbCliente;
     private JTextField txtDescripcion;
     private JTextField txtZonaSolicitud;
     private JTextField txtPrioridad;
@@ -67,7 +65,7 @@ public class PanelSolicitudes extends JPanel {
         formulario.setBorder(javax.swing.BorderFactory.createTitledBorder("Registrar solicitud"));
 
         cmbCliente = new JComboBox<>();
-        cmbCliente.setPrototypeDisplayValue(new Cliente("0000000000", "Cliente seleccionado", "", "", ""));
+        cmbCliente.setPrototypeDisplayValue("0000000000 - Cliente seleccionado");
         txtDescripcion = new JTextField(20);
         txtZonaSolicitud = new JTextField(12);
         txtPrioridad = new JTextField("0", 5);
@@ -146,8 +144,20 @@ public class PanelSolicitudes extends JPanel {
         panel.add(campo, gbc);
     }
 
-    public Cliente getClienteSeleccionado() {
-        return (Cliente) cmbCliente.getSelectedItem();
+    public String getClienteSeleccionado() {
+        return (String) cmbCliente.getSelectedItem();
+    }
+
+    public String getDocumentoClienteSeleccionado() {
+        String seleccionado = getClienteSeleccionado();
+        if (seleccionado == null || seleccionado.isEmpty()) {
+            return "";
+        }
+        int separador = seleccionado.indexOf(" - ");
+        if (separador == -1) {
+            return seleccionado.trim();
+        }
+        return seleccionado.substring(0, separador).trim();
     }
 
     public String getDescripcion() {
@@ -216,25 +226,24 @@ public class PanelSolicitudes extends JPanel {
         txtPrioridad.setText("0");
     }
 
-    public void cargarClientes(Lista<Cliente> clientes) {
-        Cliente seleccionado = getClienteSeleccionado();
-        String documentoSeleccionado = seleccionado != null ? seleccionado.getDocumento() : null;
+    public void cargarClientes(String[] clientes) {
+        String seleccionado = getClienteSeleccionado();
 
         cmbCliente.removeAllItems();
-        for (int i = 0; i < clientes.size(); i++) {
-            Cliente cliente = clientes.get(i);
+        for (int i = 0; i < clientes.length; i++) {
+            String cliente = clientes[i];
             cmbCliente.addItem(cliente);
-            if (documentoSeleccionado != null && documentoSeleccionado.equals(cliente.getDocumento())) {
+            if (seleccionado != null && seleccionado.equals(cliente)) {
                 cmbCliente.setSelectedItem(cliente);
             }
         }
     }
 
-    public void cargarTiposServicio(Lista<String> tiposServicio) {
+    public void cargarTiposServicio(String[] tiposServicio) {
         String seleccionado = getTipoServicio();
         cmbTipoServicio.removeAllItems();
-        for (int i = 0; i < tiposServicio.size(); i++) {
-            cmbTipoServicio.addItem(tiposServicio.get(i));
+        for (int i = 0; i < tiposServicio.length; i++) {
+            cmbTipoServicio.addItem(tiposServicio[i]);
         }
         if (seleccionado != null) {
             cmbTipoServicio.setSelectedItem(seleccionado);

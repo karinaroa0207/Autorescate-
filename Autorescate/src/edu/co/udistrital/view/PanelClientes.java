@@ -6,6 +6,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 
@@ -17,6 +18,8 @@ public class PanelClientes extends JPanel {
     private JTextField txtPlaca;
     private JTextField txtModelo;
     private JButton btnRegistrarCliente;
+    private JButton btnModificarCliente;
+    private JButton btnEliminarCliente;
     private JButton btnLimpiar;
     private JTable tablaClientes;
 
@@ -25,6 +28,7 @@ public class PanelClientes extends JPanel {
         setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
         add(crearFormulario(), BorderLayout.NORTH);
         tablaClientes = TablaFactory.crear(new String[]{"Documento", "Nombre", "Telefono", "Placa", "Modelo"});
+        tablaClientes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         add(new JScrollPane(tablaClientes), BorderLayout.CENTER);
     }
 
@@ -38,8 +42,13 @@ public class PanelClientes extends JPanel {
         txtPlaca = new JTextField(8);
         txtModelo = new JTextField(12);
         btnRegistrarCliente = new JButton("Registrar cliente");
+        btnModificarCliente = new JButton("Modificar");
+        btnEliminarCliente = new JButton("Eliminar");
         btnLimpiar = new JButton("Limpiar");
-        btnLimpiar.addActionListener(e -> limpiarFormulario());
+        btnLimpiar.addActionListener(e -> {
+            limpiarFormulario();
+            modoRegistro();
+        });
 
         JPanel campos = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 5));
         campos.add(new JLabel("Documento"));
@@ -55,6 +64,8 @@ public class PanelClientes extends JPanel {
 
         JPanel acciones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 5));
         acciones.add(btnRegistrarCliente);
+        acciones.add(btnModificarCliente);
+        acciones.add(btnEliminarCliente);
         acciones.add(btnLimpiar);
 
         formulario.add(campos, BorderLayout.CENTER);
@@ -86,8 +97,58 @@ public class PanelClientes extends JPanel {
         return btnRegistrarCliente;
     }
 
+    public JButton getBtnModificarCliente() {
+        return btnModificarCliente;
+    }
+
+    public JButton getBtnEliminarCliente() {
+        return btnEliminarCliente;
+    }
+
     public JTable getTablaClientes() {
         return tablaClientes;
+    }
+
+    public void setDocumento(String documento) {
+        txtDocumento.setText(documento);
+    }
+
+    public void setNombre(String nombre) {
+        txtNombre.setText(nombre);
+    }
+
+    public void setTelefono(String telefono) {
+        txtTelefono.setText(telefono);
+    }
+
+    public void setPlaca(String placa) {
+        txtPlaca.setText(placa);
+    }
+
+    public void setModelo(String modelo) {
+        txtModelo.setText(modelo);
+    }
+
+    public void modoRegistro() {
+        btnRegistrarCliente.setText("Registrar cliente");
+        txtDocumento.setEnabled(true);
+        revalidate();
+        repaint();
+    }
+
+    public void modoEdicion() {
+        btnRegistrarCliente.setText("Guardar cambios");
+        txtDocumento.setEnabled(false);
+        revalidate();
+        repaint();
+    }
+
+    public String getDocumentoSeleccionadoEnTabla() {
+        int filaSeleccionada = tablaClientes.getSelectedRow();
+        if (filaSeleccionada == -1) {
+            return null;
+        }
+        return tablaClientes.getValueAt(filaSeleccionada, 0).toString();
     }
 
     public void limpiarFormulario() {

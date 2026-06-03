@@ -1,6 +1,6 @@
 package edu.co.udistrital.model;
 
-public class Cliente {
+public class Cliente implements Clonable<Cliente> {
     private String documento;
     private String nombre;
     private String telefono;
@@ -21,14 +21,16 @@ public class Cliente {
     public String getPlacaVehiculo() { return placaVehiculo; }
     public String getModeloVehiculo() { return modeloVehiculo; }
 
-    public String[] toRow() {
-        return new String[]{
-            documento != null ? documento : "",
-            nombre != null ? nombre : "",
-            telefono != null ? telefono : "",
-            placaVehiculo != null ? placaVehiculo : "",
-            modeloVehiculo != null ? modeloVehiculo : ""
-        };
+    public void actualizarDatos(String nombre, String telefono, String placaVehiculo, String modeloVehiculo) {
+        this.nombre = nombre;
+        this.telefono = telefono;
+        this.placaVehiculo = placaVehiculo;
+        this.modeloVehiculo = modeloVehiculo;
+    }
+
+    @Override
+    public Cliente clonar() {
+        return new Cliente(documento, nombre, telefono, placaVehiculo, modeloVehiculo);
     }
 
     @Override

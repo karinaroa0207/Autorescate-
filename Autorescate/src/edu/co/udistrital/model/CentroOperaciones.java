@@ -323,6 +323,16 @@ public class CentroOperaciones {
                     gTecs.eliminar(((Tecnico) ultimaOp.getEstadoAnterior()).getIdentificacion());
                     return true;
                 }
+                case TECNICO_EDITADO: {
+                    Tecnico anterior = (Tecnico) ultimaOp.getEstadoAnterior();
+                    Tecnico actual = (Tecnico) ultimaOp.getEstadoActual();
+                    actual.actualizarDatos(anterior.getNombre(), anterior.getEspecialidad(), anterior.getZona());
+                    return true;
+                }
+                case TECNICO_ELIMINADO: {
+                    gTecs.agregarTecnico((Tecnico) ultimaOp.getEstadoAnterior());
+                    return true;
+                }
                 case UNIDAD_CREADO: {
                     gUni.eliminarUnidad(((Unidad) ultimaOp.getEstadoAnterior()).getId());
                     return true;
@@ -348,6 +358,21 @@ public class CentroOperaciones {
                 }
                 case CLIENTE_CREADO: {
                     gClientes.eliminarCliente(((Cliente) ultimaOp.getEstadoAnterior()).getDocumento());
+                    return true;
+                }
+                case CLIENTE_EDITADO: {
+                    Cliente anterior = (Cliente) ultimaOp.getEstadoAnterior();
+                    Cliente actual = (Cliente) ultimaOp.getEstadoActual();
+                    actual.actualizarDatos(
+                            anterior.getNombre(),
+                            anterior.getTelefono(),
+                            anterior.getPlacaVehiculo(),
+                            anterior.getModeloVehiculo()
+                    );
+                    return true;
+                }
+                case CLIENTE_ELIMINADO: {
+                    gClientes.agregarCliente((Cliente) ultimaOp.getEstadoAnterior());
                     return true;
                 }
                 case REPUESTO_PREPARADO: {
@@ -455,6 +480,38 @@ public class CentroOperaciones {
         return gClientes.buscarPorDocumento(documento);
     }
 
+    public boolean modificarCliente(String documento, String nombre, String telefono, String placaVehiculo, String modeloVehiculo) {
+        Cliente cliente = gClientes.buscarPorDocumento(documento);
+        if (cliente == null) {
+            return false;
+        }
+        Cliente anterior = cliente.clonar();
+        cliente.actualizarDatos(nombre, telefono, placaVehiculo, modeloVehiculo);
+        historial.apilar(
+                new Operacion(
+                        TipoOperacion.CLIENTE_EDITADO,
+                        "Cliente " + cliente.getDocumento() + " modificado",
+                        anterior,
+                        cliente
+                )
+        );
+        return true;
+    }
+
+    public Cliente eliminarCliente(String documento) {
+        Cliente cliente = gClientes.eliminarCliente(documento);
+        if (cliente != null) {
+            historial.apilar(
+                    new Operacion(
+                            TipoOperacion.CLIENTE_ELIMINADO,
+                            "Cliente " + cliente.getDocumento() + " eliminado",
+                            cliente
+                    )
+            );
+        }
+        return cliente;
+    }
+
     public Solicitud verSiguienteSolicitud() {
         return gSol.verSiguiente();
     }
@@ -475,11 +532,29 @@ public class CentroOperaciones {
             historial.apilar(
                     new Operacion(
                             TipoOperacion.TECNICO_ELIMINADO,
-                            "Eliminada unidad " + seleccionada.getIdentificacion(),
+                            "Tecnico " + seleccionada.getIdentificacion() + " eliminado",
                             exito
                     ));
         }
         return exito;
+    }
+
+    public boolean modificarTecnico(String id, String nombre, String especialidad, String zona) {
+        Tecnico tecnico = gTecs.buscarPorId(id);
+        if (tecnico == null) {
+            return false;
+        }
+        Tecnico anterior = tecnico.clonar();
+        tecnico.actualizarDatos(nombre, especialidad, zona);
+        historial.apilar(
+                new Operacion(
+                        TipoOperacion.TECNICO_EDITADO,
+                        "Tecnico " + tecnico.getIdentificacion() + " modificado",
+                        anterior,
+                        tecnico
+                )
+        );
+        return true;
     }
 
     public boolean asignarTecnico(String id) {

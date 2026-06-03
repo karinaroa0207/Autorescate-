@@ -1,7 +1,5 @@
 package edu.co.udistrital.view;
 
-import edu.co.udistrital.model.Lista;
-import edu.co.udistrital.model.Repuesto;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -95,12 +93,12 @@ public class PanelRepuestos extends JPanel {
         txtNombre.setText("");
     }
 
-    public void cargarTiposFrecuentes(Lista<Repuesto> frecuentes) {
+    public void cargarTiposFrecuentes(String[] frecuentes) {
         String seleccionado = getTipoFrecuente();
         cmbTipoFrecuente.removeAllItems();
         cmbTipoFrecuente.addItem("Personalizado");
-        for (int i = 0; i < frecuentes.size(); i++) {
-            cmbTipoFrecuente.addItem(frecuentes.get(i).getNombre());
+        for (int i = 0; i < frecuentes.length; i++) {
+            cmbTipoFrecuente.addItem(frecuentes[i]);
         }
         if (seleccionado != null) {
             cmbTipoFrecuente.setSelectedItem(seleccionado);

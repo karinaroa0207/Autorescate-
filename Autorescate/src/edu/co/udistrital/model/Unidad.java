@@ -63,24 +63,6 @@ public abstract class Unidad implements Clonable<Unidad> {
         setDisponible(true);
     }
 
-    public String[] toRowDisponible() {
-        return new String[]{
-            id != null ? String.valueOf(id) : "",
-            zona != null ? zona : "",
-            getTipo() != null ? getTipo().getDescripcion() : ""
-        };
-    }
-
-    public String[] toRow() {
-        return new String[]{
-            id != null ? String.valueOf(id) : "",
-            getTipo() != null ? getTipo().getDescripcion() : "",
-            zona != null ? zona : "",
-            estado != null ? estado.toString() : "",
-            puedeAsignarse() ? "Si" : "No"
-        };
-    }
-
     @Override
     public Unidad clonar() {
         Unidad copia = crearCopiaBase();

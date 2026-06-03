@@ -16,7 +16,7 @@ public class ControlRepuestos {
         this.vista = vista;
         this.modelo = modelo;
         this.vMensajes = vMensajes;
-        vista.cargarTiposFrecuentes(modelo.getRepuestosFrecuentes());
+        vista.cargarTiposFrecuentes(nombresRepuestosFrecuentes());
         vista.getBtnPreparar().addActionListener(e -> prepararRepuesto());
         vista.getBtnRetirar().addActionListener(e -> retirarUltimo());
         vista.getCmbTipoFrecuente().addActionListener(e -> cargarTipoFrecuente());
@@ -49,11 +49,11 @@ public class ControlRepuestos {
     }
 
     public void actualizarTabla() {
-        vista.cargarTiposFrecuentes(modelo.getRepuestosFrecuentes());
+        vista.cargarTiposFrecuentes(nombresRepuestosFrecuentes());
         TablaUtils.limpiarTabla(vista.getTablaRepuestos());
         Lista<Repuesto> repuestos = modelo.getRepuestosPreparados();
         for (int i = 0; i < repuestos.size(); i++) {
-            TablaUtils.agregarFila(vista.getTablaRepuestos(), repuestos.get(i).toRowPreparado());
+            TablaUtils.agregarFila(vista.getTablaRepuestos(), FilasTabla.repuestoPreparado(repuestos.get(i)));
         }
     }
 
@@ -69,5 +69,14 @@ public class ControlRepuestos {
                     repuesto.getNombre()
             );
         }
+    }
+
+    private String[] nombresRepuestosFrecuentes() {
+        Lista<Repuesto> frecuentes = modelo.getRepuestosFrecuentes();
+        String[] nombres = new String[frecuentes.size()];
+        for (int i = 0; i < frecuentes.size(); i++) {
+            nombres[i] = frecuentes.get(i).getNombre();
+        }
+        return nombres;
     }
 }

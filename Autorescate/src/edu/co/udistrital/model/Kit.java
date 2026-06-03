@@ -50,23 +50,6 @@ public class Kit implements Clonable<Kit> {
         }
     }
 
-    public String[] toRowDisponible() {
-        return new String[]{
-            id != null ? String.valueOf(id) : "",
-            codigo != null ? codigo : "",
-            descripcion != null ? descripcion : ""
-        };
-    }
-
-    public String[] toRow() {
-        return new String[]{
-            id != null ? String.valueOf(id) : "",
-            codigo != null ? codigo : "",
-            descripcion != null ? descripcion : "",
-            estado != null ? estado.toString() : ""
-        };
-    }
-
     @Override
     public Kit clonar() {
         Kit clon = new Kit(this.codigo, this.descripcion);

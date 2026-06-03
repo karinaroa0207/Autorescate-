@@ -1,7 +1,6 @@
 package edu.co.udistrital.model;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 public class Solicitud implements MiComparable<Solicitud> {
 
@@ -156,69 +155,4 @@ public class Solicitud implements MiComparable<Solicitud> {
         return 0;
     }
 
-    public String[] toRowEjecucion() {
-        return new String[]{
-            String.valueOf(id),
-            getCliente() != null ? getCliente() : "",
-            unidadAsignada != null ? unidadAsignada.getTipo().getDescripcion() : "Sin asignar",
-            tecnicoAsignado != null ? tecnicoAsignado.getNombre() : "Sin asignar",
-            kitAsignado != null ? kitAsignado.getCodigo() : "Sin kit",
-            repuestoAsignado != null ? repuestoAsignado.getCodigoRepuesto() : "Sin repuesto",
-            estado != null ? estado.toString() : ""
-        };
-    }
-
-    public String[] toRowPendiente() {
-        return new String[]{
-            String.valueOf(id),
-            getCliente() != null ? getCliente() : "",
-            tipoServicio != null ? tipoServicio : "",
-            zona != null ? zona : "",
-            String.valueOf(prioridad),
-            estado != null ? estado.toString() : ""
-        };
-    }
-
-    public String[] toRowCierre() {
-        return new String[]{
-            String.valueOf(id),
-            getCliente() != null ? getCliente() : "",
-            tipoServicio != null ? tipoServicio : "",
-            unidadAsignada != null ? unidadAsignada.getTipo().getDescripcion() : "Ninguna",
-            tecnicoAsignado != null ? tecnicoAsignado.getNombre() : "No asignado",
-            kitAsignado != null ? kitAsignado.getCodigo() : "Sin kit",
-            repuestoAsignado != null ? repuestoAsignado.getCodigoRepuesto() : "Sin repuesto",
-            fechaCierre != null ? fechaCierre.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) : ""
-        };
-    }
-
-    public String[] toCSVRow() {
-        return new String[]{
-            String.valueOf(id),
-            cliente != null ? cliente.getDocumento() : "",
-            cliente != null ? cliente.getNombre() : getCliente() != null ? getCliente() : "",
-            cliente != null ? cliente.getTelefono() : "",
-            cliente != null ? cliente.getPlacaVehiculo() : "",
-            cliente != null ? cliente.getModeloVehiculo() : "",
-            descripcion != null ? descripcion : "",
-            tipoServicio != null ? tipoServicio : "",
-            zona != null ? zona : "",
-            String.valueOf(prioridad),
-            esCritica ? "Si" : "No",
-            estado != null ? estado.toString() : "",
-            unidadAsignada != null ? unidadAsignada.getId() : "",
-            unidadAsignada != null ? unidadAsignada.getTipo().getDescripcion() : "",
-            unidadAsignada != null ? unidadAsignada.getZona() : "",
-            tecnicoAsignado != null ? tecnicoAsignado.getIdentificacion() : "",
-            tecnicoAsignado != null ? tecnicoAsignado.getNombre() : "",
-            tecnicoAsignado != null ? tecnicoAsignado.getEspecialidad() : "",
-            tecnicoAsignado != null ? tecnicoAsignado.getZona() : "",
-            kitAsignado != null ? kitAsignado.getCodigo() : "Sin kit",
-            kitAsignado != null ? kitAsignado.getDescripcion() : "",
-            repuestoAsignado != null ? repuestoAsignado.getCodigoRepuesto() : "",
-            repuestoAsignado != null ? repuestoAsignado.getNombre() : "",
-            fechaRegistro != null ? fechaRegistro.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) : "",
-            fechaCierre != null ? fechaCierre.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) : "" // Cambiado para que coincida con el formato visual
-        };
-    }
 }

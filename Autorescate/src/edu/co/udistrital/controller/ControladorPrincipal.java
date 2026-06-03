@@ -20,10 +20,7 @@ import edu.co.udistrital.view.VentanaPrincipal;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
 
 public class ControladorPrincipal {
 
@@ -153,7 +150,7 @@ public class ControladorPrincipal {
         Lista<Operacion> lista = modelo.getHistorial();
         for (int i = 0; i < lista.size(); i++) {
             Operacion actual = lista.get(i);
-            vista.agregarFila(vista.getTablaHistorial(), actual.toRow(i + 1));
+            vista.agregarFila(vista.getTablaHistorial(), FilasTabla.operacion(actual, i + 1));
         }
     }
 

@@ -90,11 +90,4 @@ public class Operacion {
         return repuesto;
     }
 
-    public String[] toRow(int orden) {
-        return new String[]{
-            String.valueOf(orden),
-            tipo.toString(),
-            detalle != null ? detalle : ""
-        };
-    }
 }
