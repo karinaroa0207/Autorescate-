@@ -14,6 +14,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.JComboBox;
 
 public class PanelAsignacion extends JPanel {
 
@@ -30,6 +31,8 @@ public class PanelAsignacion extends JPanel {
     private JTable tablaTecnicos;
     private JTable tablaKits;
     private JTable tablaRepuestos;
+
+    private JComboBox<String> cmbTipoRepuesto;
 
     private JTabbedPane tabRecursos;
 
@@ -59,8 +62,10 @@ public class PanelAsignacion extends JPanel {
 
         btnDespacharServicio = new JButton("Confirmar Despacho");
         btnRefrescarDisponibilidad = new JButton("Actualizar Datos");
-
+        cmbTipoRepuesto = new javax.swing.JComboBox<>();
         JPanel acciones = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        acciones.add(new JLabel("Repuesto"));
+        acciones.add(cmbTipoRepuesto);
         acciones.add(btnRefrescarDisponibilidad);
         acciones.add(btnDespacharServicio);
 
@@ -77,16 +82,22 @@ public class PanelAsignacion extends JPanel {
             "ID", "Zona", "Tipo"
         });
         tablaUnidades.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        
         tablaTecnicos = TablaFactory.crear(new String[]{
             "ID", "Nombre", "Especialidad", "Zona"
         });
         tablaTecnicos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        
         tablaKits = TablaFactory.crear(new String[]{
             "ID", "Codigo", "Descripcion"
         });
+        tablaKits.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        
         tablaRepuestos = TablaFactory.crear(new String[]{
-            "Codigo", "Nombre", "Cantidad"
+            "Tipo", "Codigo"
         });
+        tablaRepuestos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        
         tabRecursos = new JTabbedPane();
         tabRecursos.addTab("Unidades disponibles", new JScrollPane(tablaUnidades));
         tabRecursos.addTab("Tecnicos disponibles", new JScrollPane(tablaTecnicos));
@@ -160,6 +171,10 @@ public class PanelAsignacion extends JPanel {
         return (String) tablaUnidades.getValueAt(fila, 0);
     }
 
+    public String getTipoRepuestoSeleccionado() {
+        return (String) cmbTipoRepuesto.getSelectedItem();
+    }
+
     public void mostrarSolicitudActual(String id, String cliente, String servicio, String zona, String prioridad) {
         lblIdValor.setText(id);
         lblClienteValor.setText(cliente);
@@ -192,5 +207,15 @@ public class PanelAsignacion extends JPanel {
         return tablaRepuestos;
     }
     
-    
+    public void cargarTiposRepuestos(String[] tipos) {
+        String sel = getTipoRepuestoSeleccionado();
+        cmbTipoRepuesto.removeAllItems();
+        cmbTipoRepuesto.addItem("");
+        for (int i = 0; i < tipos.length; i++) {
+            cmbTipoRepuesto.addItem(tipos[i]);
+        }
+        if (sel != null) {
+            cmbTipoRepuesto.setSelectedItem(sel);
+        }
+    }   
 }

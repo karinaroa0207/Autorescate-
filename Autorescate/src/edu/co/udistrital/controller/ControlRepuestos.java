@@ -3,6 +3,7 @@ package edu.co.udistrital.controller;
 import edu.co.udistrital.model.CentroOperaciones;
 import edu.co.udistrital.model.Lista;
 import edu.co.udistrital.model.Repuesto;
+import edu.co.udistrital.model.TipoRepuesto;
 import edu.co.udistrital.view.PanelRepuestos;
 import edu.co.udistrital.view.TablaUtils;
 
@@ -16,67 +17,41 @@ public class ControlRepuestos {
         this.vista = vista;
         this.modelo = modelo;
         this.vMensajes = vMensajes;
-        vista.cargarTiposFrecuentes(nombresRepuestosFrecuentes());
+        TipoRepuesto[] tipos = TipoRepuesto.values();
+        String[] nombresTipos = new String[tipos.length];
+        for (int i = 0; i < tipos.length; i++) {
+            nombresTipos[i] = tipos[i].toString();
+        }
+        vista.cargarTiposRepuestos(nombresTipos);
         vista.getBtnPreparar().addActionListener(e -> prepararRepuesto());
-        vista.getBtnRetirar().addActionListener(e -> retirarUltimo());
-        vista.getCmbTipoFrecuente().addActionListener(e -> cargarTipoFrecuente());
     }
 
     public void prepararRepuesto() {
-        String codigo = vista.getCodigo();
-        String nombre = vista.getNombre();
+        String tipoSeleccionado = vista.getTipoSeleccionado();
 
-        if (codigo.isEmpty() || nombre.isEmpty()) {
-            vMensajes.mostrarMensajeError("El repuesto debe tener codigo y nombre.", "Error Campo");
-            return;
+        TipoRepuesto tipo = TipoRepuesto.BATERIA;
+        if (tipoSeleccionado != null && !tipoSeleccionado.isEmpty()) {
+            for (TipoRepuesto t : TipoRepuesto.values()) {
+                if (t.toString().equalsIgnoreCase(tipoSeleccionado)) {
+                    tipo = t;
+                    break;
+                }
+            }
         }
 
-        Repuesto repuesto = new Repuesto(codigo, nombre);
+        Repuesto repuesto = new Repuesto(tipo);
         modelo.prepararRepuesto(repuesto);
         vista.limpiarFormulario();
         actualizarTabla();
-        vMensajes.agregarMensaje("Repuesto " + codigo + " preparado y agregado a la pila.");
-    }
-
-    public void retirarUltimo() {
-        Repuesto repuesto = modelo.retirarRepuestoPreparado();
-        if (repuesto == null) {
-            vMensajes.mostrarMensaje("No hay repuestos preparados.", "Info");
-            return;
-        }
-        actualizarTabla();
-        vMensajes.agregarMensaje("Se retiro el ultimo repuesto preparado: " + repuesto.getCodigoRepuesto() + ".");
+        vMensajes.agregarMensaje("Repuesto preparado: " + repuesto.getCodigoRepuesto() + " (" + tipo.toString() + ")");
     }
 
     public void actualizarTabla() {
-        vista.cargarTiposFrecuentes(nombresRepuestosFrecuentes());
         TablaUtils.limpiarTabla(vista.getTablaRepuestos());
         Lista<Repuesto> repuestos = modelo.getRepuestosPreparados();
         for (int i = 0; i < repuestos.size(); i++) {
             TablaUtils.agregarFila(vista.getTablaRepuestos(), FilasTabla.repuestoPreparado(repuestos.get(i)));
         }
     }
-
-    private void cargarTipoFrecuente() {
-        String nombre = vista.getTipoFrecuente();
-        if (nombre == null || nombre.equals("Personalizado")) {
-            return;
-        }
-        Repuesto repuesto = modelo.buscarRepuestoFrecuente(nombre);
-        if (repuesto != null) {
-            vista.cargarDatos(
-                    repuesto.getCodigoRepuesto(),
-                    repuesto.getNombre()
-            );
-        }
-    }
-
-    private String[] nombresRepuestosFrecuentes() {
-        Lista<Repuesto> frecuentes = modelo.getRepuestosFrecuentes();
-        String[] nombres = new String[frecuentes.size()];
-        for (int i = 0; i < frecuentes.size(); i++) {
-            nombres[i] = frecuentes.get(i).getNombre();
-        }
-        return nombres;
-    }
 }
+

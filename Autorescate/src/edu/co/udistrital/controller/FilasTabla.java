@@ -83,9 +83,8 @@ public class FilasTabla {
 
     public static String[] repuestoPreparado(Repuesto repuesto) {
         return new String[]{
-            valor(repuesto.getCodigoRepuesto()),
-            valor(repuesto.getNombre()),
-            String.valueOf(repuesto.getStockDisponible())
+            repuesto.getTipo() != null ? repuesto.getTipo().toString() : "",
+            valor(repuesto.getCodigoRepuesto())
         };
     }
 
@@ -128,6 +127,7 @@ public class FilasTabla {
     public static String[] operacion(Operacion operacion, int orden) {
         return new String[]{
             String.valueOf(orden),
+            operacion.getDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")),
             operacion.getTipo().toString(),
             valor(operacion.getDetalle())
         };

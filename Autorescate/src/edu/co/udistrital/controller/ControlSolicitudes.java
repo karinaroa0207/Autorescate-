@@ -8,6 +8,7 @@ import edu.co.udistrital.model.Repuesto;
 import edu.co.udistrital.model.Solicitud;
 import edu.co.udistrital.model.Tecnico;
 import edu.co.udistrital.model.Unidad;
+import edu.co.udistrital.model.TipoRepuesto;
 import edu.co.udistrital.view.PanelAsignacion;
 import edu.co.udistrital.view.PanelSolicitudes;
 import edu.co.udistrital.view.TablaUtils;
@@ -96,6 +97,12 @@ public class ControlSolicitudes {
             Repuesto repuesto = repuestos.get(i);
             TablaUtils.agregarFila(pAsig.getTablaRepuestos(), FilasTabla.repuestoPreparado(repuesto));
         }
+        TipoRepuesto[] tipos = TipoRepuesto.values();
+        String[] nombresTipos = new String[tipos.length];
+        for (int i = 0; i < tipos.length; i++) {
+            nombresTipos[i] = tipos[i].toString();
+        }
+        pAsig.cargarTiposRepuestos(nombresTipos);
     }
 
     public void registrarSolicitud() {
@@ -143,7 +150,19 @@ public class ControlSolicitudes {
             vMensajes.mostrarMensaje("Seleccione una unidad y luego un tecnico disponible antes de confirmar el despacho.");
             return;
         } 
-        if (modelo.asignarRecurso(id, idUnidad, idTecnico)) {            
+        // obtener tipo de repuesto deseado (opcional)
+        String tipoSeleccionado = pAsig.getTipoRepuestoSeleccionado();
+        TipoRepuesto tipoReq = null;
+        if (tipoSeleccionado != null && !tipoSeleccionado.trim().isEmpty()) {
+            for (TipoRepuesto t : TipoRepuesto.values()) {
+                if (t.toString().equalsIgnoreCase(tipoSeleccionado)) {
+                    tipoReq = t;
+                    break;
+                }
+            }
+        }
+
+        if (modelo.asignarRecurso(id, idUnidad, idTecnico, tipoReq)) {
             actualizarTabla();
             actualizarAsignacion();
             String recurso = modelo.getUltimoDetalleDespacho();

@@ -62,7 +62,7 @@ public class ExportadorCSV {
             kit != null ? valor(kit.getCodigo()) : "Sin kit",
             kit != null ? valor(kit.getDescripcion()) : "",
             repuesto != null ? valor(repuesto.getCodigoRepuesto()) : "",
-            repuesto != null ? valor(repuesto.getNombre()) : "",
+            repuesto != null ? (repuesto.getTipo() != null ? valor(repuesto.getTipo().toString()) : "") : "",
             solicitud.getFechaRegistro() != null ? solicitud.getFechaRegistro().format(FORMATO_FECHA_CSV) : "",
             solicitud.getFechaCierre() != null ? solicitud.getFechaCierre().format(FORMATO_FECHA_CSV) : ""
         };

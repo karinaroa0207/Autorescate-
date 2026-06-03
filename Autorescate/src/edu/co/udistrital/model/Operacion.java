@@ -1,5 +1,7 @@
 package edu.co.udistrital.model;
 
+import java.time.LocalDateTime;
+
 public class Operacion {
 
     private TipoOperacion tipo;
@@ -11,15 +13,7 @@ public class Operacion {
     private String detalle;
     private Object estadoAnterior;
     private Object estadoActual;
-
-    public Operacion(TipoOperacion tipo, Solicitud solicitud, Unidad unidad, Tecnico tecnico, Kit kit, String detalle) {
-        this.tipo = tipo;
-        this.solicitud = solicitud;
-        this.unidad = unidad;
-        this.tecnico = tecnico;
-        this.kit = kit;
-        this.detalle = detalle;
-    }
+    private LocalDateTime date;   
 
     public Operacion(TipoOperacion tipo, Solicitud solicitud, Unidad unidad, Tecnico tecnico, Kit kit, Repuesto repuesto, String detalle) {
         this.tipo = tipo;
@@ -31,20 +25,11 @@ public class Operacion {
         this.detalle = detalle;
     }
 
-    public Operacion(TipoOperacion tipo, Solicitud solicitud, Unidad unidad, Tecnico tecnico, Kit kit, String detalle, Object estadoAnterior) {
-        this.tipo = tipo;
-        this.solicitud = solicitud;
-        this.unidad = unidad;
-        this.tecnico = tecnico;
-        this.kit = kit;
-        this.detalle = detalle;
-        this.estadoAnterior = estadoAnterior;
-    }
-
     public Operacion(TipoOperacion tipo, String detalle, Object estadoAnterior) {
         this.tipo = tipo;
         this.detalle = detalle;
         this.estadoAnterior = estadoAnterior;
+        this.date = LocalDateTime.now();
     }
 
     public Operacion(TipoOperacion tipo, String detalle, Object estadoAnterior, Object estadoActual) {
@@ -52,6 +37,7 @@ public class Operacion {
         this.detalle = detalle;
         this.estadoAnterior = estadoAnterior;
         this.estadoActual = estadoActual;
+        this.date = LocalDateTime.now();
     }
 
     public TipoOperacion getTipo() {
@@ -81,6 +67,10 @@ public class Operacion {
     public Object getEstadoActual() {
         return estadoActual;
     }
+
+    public LocalDateTime getDate() {
+        return date;
+    }        
 
     public Kit getKit() {
         return kit;

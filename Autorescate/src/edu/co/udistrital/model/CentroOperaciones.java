@@ -9,7 +9,6 @@ public class CentroOperaciones {
     private GestorUnidad gUni;
     private GestorCliente gClientes;
     private GestorRepuestos gRepuestos;
-    private CatalogoRepuestos catalogoRepuestos;
     private CatalogoServicios catalogoServicios;
     private String ultimoDetalleDespacho;
 
@@ -21,7 +20,6 @@ public class CentroOperaciones {
         this.gUni = gUni;
         this.gClientes = gClientes;
         this.gRepuestos = gRepuestos;
-        this.catalogoRepuestos = new CatalogoRepuestos();
         this.catalogoServicios = new CatalogoServicios();
         this.ultimoDetalleDespacho = "";
     }
@@ -109,17 +107,8 @@ public class CentroOperaciones {
     }
 
     public Repuesto retirarRepuestoPreparado() {
-        Repuesto repuesto = gRepuestos.despacharRepuesto();
-        if (repuesto != null) {
-            historial.apilar(
-                    new Operacion(
-                            TipoOperacion.REPUESTO_RETIRADO,
-                            "Repuesto " + repuesto.getCodigoRepuesto() + " retirado",
-                            repuesto
-                    )
-            );
-        }
-        return repuesto;
+        // El despacho de repuestos fue removido; este método ya no está disponible
+        return null;
     }
 
     public boolean asignarRecurso() {
@@ -134,15 +123,11 @@ public class CentroOperaciones {
         if (unidadDisponible == null || tecnicoDisponible == null) {
             return false;
         }
-
         Kit kitDisponible = gKits.despacharKit();
-        Repuesto repuestoDisponible = null;
         if (kitDisponible == null) {
-            repuestoDisponible = gRepuestos.despacharRepuesto();
-        }
-        if (kitDisponible == null && repuestoDisponible == null) {
             return false;
         }
+        Repuesto repuestoDisponible = null;
         ultimoDetalleDespacho = detalleRecursoRapido(kitDisponible, repuestoDisponible);
         tecnicoDisponible.asignarTrabajo(kitDisponible);
         unidadDisponible.setDisponible(false);
@@ -179,18 +164,79 @@ public class CentroOperaciones {
                 || !zonaCoincide(tecnicoDisponible.getZona(), solicitud.getZona())) {
             return false;
         }
-
+        
         Kit kitDisponible = gKits.despacharKit();
-        Repuesto repuestoDisponible = null;
         if (kitDisponible == null) {
-            repuestoDisponible = gRepuestos.despacharRepuesto();
-        }
-        if (kitDisponible == null && repuestoDisponible == null) {
             return false;
+        }
+        Repuesto repuestoDisponible = null;        
+        ultimoDetalleDespacho = detalleRecursoRapido(kitDisponible, repuestoDisponible);
+
+        solicitud = gSol.obtenerSiguiente();
+        if (solicitud == null) {
+            if (repuestoDisponible != null) {
+                gRepuestos.revertirDespacho(repuestoDisponible);
+            }
+            gKits.recibirKit(kitDisponible);
+            return false;
+        }
+        tecnicoDisponible.asignarTrabajo(kitDisponible);
+        unidadDisponible.setDisponible(false);
+        gSol.agregarEnEjecucion(solicitud, unidadDisponible, tecnicoDisponible, kitDisponible, repuestoDisponible);
+        gSol.agregarCasoEjucion(solicitud);
+        historial.apilar(
+                new Operacion(
+                        TipoOperacion.ASIGNACION,
+                        solicitud,
+                        unidadDisponible,
+                        tecnicoDisponible,
+                        kitDisponible,
+                        repuestoDisponible,
+                        "Asignado a caso " + solicitud.getId()
+                        + " Unidad " + unidadDisponible.getTipo()
+                        + ", Tecnico " + tecnicoDisponible.getNombre()
+                        + " y " + ultimoDetalleDespacho
+                ));
+        return true;
+    }
+
+    public boolean asignarRecurso(String idSolicitud, String idUnidad, String idTecnica, TipoRepuesto tipoRepuesto) {
+        Solicitud solicitud = gSol.verSiguiente();
+        if (solicitud == null || idSolicitud == null || !solicitud.getId().equals(idSolicitud)) {
+            return false;
+        }
+        Unidad unidadDisponible = gUni.buscarPorId(idUnidad);
+        Tecnico tecnicoDisponible = gTecs.buscarPorId(idTecnica);
+
+        if (unidadDisponible == null || tecnicoDisponible == null
+                || !unidadDisponible.puedeAsignarse() || !tecnicoDisponible.puedeAsignarse()
+                || !zonaCoincide(unidadDisponible.getZona(), solicitud.getZona())
+                || !zonaCoincide(tecnicoDisponible.getZona(), solicitud.getZona())) {
+            return false;
+        }
+        
+        Kit kitDisponible = gKits.despacharKit();
+        if (kitDisponible == null) {
+            return false;
+        }
+        Repuesto repuestoDisponible = null;
+        if (tipoRepuesto != null) {
+            repuestoDisponible = gRepuestos.despacharPorTipo(tipoRepuesto);
+            if (repuestoDisponible == null) {
+                gKits.revertirAsignacion(kitDisponible);
+                return false;
+            }
         }
         ultimoDetalleDespacho = detalleRecursoRapido(kitDisponible, repuestoDisponible);
 
         solicitud = gSol.obtenerSiguiente();
+        if (solicitud == null) {
+            if (repuestoDisponible != null) {
+                gRepuestos.revertirDespacho(repuestoDisponible);
+            }
+            gKits.revertirAsignacion(kitDisponible);
+            return false;
+        }
         tecnicoDisponible.asignarTrabajo(kitDisponible);
         unidadDisponible.setDisponible(false);
         gSol.agregarEnEjecucion(solicitud, unidadDisponible, tecnicoDisponible, kitDisponible, repuestoDisponible);
@@ -295,14 +341,15 @@ public class CentroOperaciones {
                     Repuesto repuesto = ultimaOp.getRepuesto();
                     unidad.revertirAsignacion();
                     tecnico.revertirAsignar();
+                    boolean exito = true;
                     if (kit != null) {
                         gKits.revertirAsignacion(kit);
                     }
                     if (repuesto != null) {
-                        gRepuestos.revertirDespacho(repuesto);
+                        exito = gRepuestos.revertirDespacho(repuesto) && exito;
                     }
                     gSol.revertirAsignacion(solicitud);
-                    return true;
+                    return exito;
                 }
                 case CIERRE: {
                     Solicitud solicitud = ultimaOp.getSolicitud();
@@ -376,13 +423,10 @@ public class CentroOperaciones {
                     return true;
                 }
                 case REPUESTO_PREPARADO: {
-                    gRepuestos.revertirPreparacion();
+                    gRepuestos.revertirPreparacion(ultimaOp.getRepuesto());
                     return true;
                 }
-                case REPUESTO_RETIRADO: {
-                    gRepuestos.revertirDespacho((Repuesto) ultimaOp.getEstadoAnterior());
-                    return true;
-                }
+                
                 default:
                     break;
             }
@@ -454,14 +498,6 @@ public class CentroOperaciones {
 
     public Lista<Repuesto> getRepuestosPreparados() {
         return gRepuestos.obtenerPreparados();
-    }
-
-    public Lista<Repuesto> getRepuestosFrecuentes() {
-        return catalogoRepuestos.obtenerFrecuentes();
-    }
-
-    public Repuesto buscarRepuestoFrecuente(String nombre) {
-        return catalogoRepuestos.buscarPorNombre(nombre);
     }
 
     public Lista<String> getTiposServicio() {

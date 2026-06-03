@@ -13,6 +13,7 @@ import edu.co.udistrital.model.Kit;
 import edu.co.udistrital.model.Lista;
 import edu.co.udistrital.model.Operacion;
 import edu.co.udistrital.model.Repuesto;
+import edu.co.udistrital.model.TipoRepuesto;
 import edu.co.udistrital.model.Solicitud;
 import edu.co.udistrital.model.Tecnico;
 import edu.co.udistrital.model.UnidadFactory;
@@ -111,8 +112,8 @@ public class ControladorPrincipal {
         modelo.registrarSolicitud(new Solicitud(aseguradora, "Bus averiado con pasajeros en carretera", "Norte", "Grua", 95));
         modelo.agregarKit(new Kit("KIT-001", "Herramientas"));
         modelo.agregarKit(new Kit("KIT-002", "Llantas"));
-        modelo.prepararRepuesto(new Repuesto("REP-001", "Bateria auxiliar"));
-        modelo.prepararRepuesto(new Repuesto("REP-002", "Fusible de emergencia"));
+        modelo.prepararRepuesto(new Repuesto(TipoRepuesto.BATERIA));
+        modelo.prepararRepuesto(new Repuesto(TipoRepuesto.BATERIA));
         vista.agregarMensaje("Sistema inicializado con datos de prueba.");
     }
 
