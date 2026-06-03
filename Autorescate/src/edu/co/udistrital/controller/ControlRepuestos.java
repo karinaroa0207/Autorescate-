@@ -41,8 +41,7 @@ public class ControlRepuestos {
         }
 
         Repuesto repuesto = new Repuesto(tipo);
-        modelo.prepararRepuesto(repuesto);
-        vista.limpiarFormulario();
+        modelo.prepararRepuesto(repuesto);        
         actualizarTabla();
         vMensajes.mostrarMensaje("Repuesto preparado: " + repuesto.getCodigoRepuesto() + " (" + tipo.toString() + ")");
         vMensajes.agregarMensaje("Repuesto preparado: " + repuesto.getCodigoRepuesto() + " (" + tipo.toString() + ")");        

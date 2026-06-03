@@ -18,8 +18,6 @@ import edu.co.udistrital.model.Solicitud;
 import edu.co.udistrital.model.Tecnico;
 import edu.co.udistrital.model.UnidadFactory;
 import edu.co.udistrital.view.VentanaPrincipal;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 import java.io.IOException;
 
@@ -84,13 +82,7 @@ public class ControladorPrincipal {
                 default:
                     break;
             }
-        });
-        vista.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                generarCSV(false);
-            }
-        });
+        });        
     }
 
     private void inicializarDatosPrueba() {
@@ -126,7 +118,7 @@ public class ControladorPrincipal {
     private void deshacer() {
         String rta = modelo.deshacerUltimaOperacion();
         if (!rta.isEmpty()) {
-            vista.agregarMensaje("Operacion reciente revertida("+rta+")");
+            vista.agregarMensaje("Operacion reciente revertida(" + rta + ")");
         } else {
             vista.agregarMensaje("No hay asignaciones o cierres recientes para revertir.");
         }
@@ -160,9 +152,9 @@ public class ControladorPrincipal {
         try {
             Lista<Solicitud> casos = modelo.getCasosCerrados();
             ExportadorCSV.generarReporteCasosCerrados(casos);
-            vista.agregarMensaje("Archivo reporte generado con éxito en carpeta reportes del proyecto.");            
-            if(avisar) {
-                vista.mostrarMensaje("Archivo reporte generado con éxito en carpeta reportes del proyecto.");            
+            vista.agregarMensaje("Archivo reporte generado con éxito en carpeta reportes del proyecto.");
+            if (avisar) {
+                vista.mostrarMensaje("Archivo reporte generado con éxito en carpeta reportes del proyecto.");
             }
         } catch (IOException ex) {
             vista.agregarMensaje("Error al escribir el archivo CSV: " + ex.getMessage());

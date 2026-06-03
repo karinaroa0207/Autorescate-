@@ -23,6 +23,7 @@ public class Operacion {
         this.kit = kit;
         this.repuesto = repuesto;
         this.detalle = detalle;
+        this.date = LocalDateTime.now();
     }
 
     public Operacion(TipoOperacion tipo, String detalle, Object estadoAnterior) {

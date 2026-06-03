@@ -106,11 +106,6 @@ public class CentroOperaciones {
         );
     }
 
-    public Repuesto retirarRepuestoPreparado() {
-        // El despacho de repuestos fue removido; este método ya no está disponible
-        return null;
-    }
-
     public boolean asignarRecurso() {
         Solicitud solicitud = gSol.verSiguiente();
         if (solicitud == null) {
@@ -423,7 +418,7 @@ public class CentroOperaciones {
                     break;
                 }
                 case REPUESTO_PREPARADO: {
-                    gRepuestos.revertirPreparacion(ultimaOp.getRepuesto());
+                    gRepuestos.revertirPreparacion((Repuesto) ultimaOp.getEstadoAnterior());
                     break;
                 }
 

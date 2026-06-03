@@ -15,9 +15,11 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.JOptionPane;
 
-public class VentanaPrincipal extends JFrame implements VisualizadorMensajes{
+public class VentanaPrincipal extends JFrame implements VisualizadorMensajes {
 
     private PanelSolicitudes panelSolicitudes;
     private PanelRecursos panelRecursos;
@@ -36,7 +38,7 @@ public class VentanaPrincipal extends JFrame implements VisualizadorMensajes{
         setTitle("AutoRescate 24/7 - Centro de Operaciones");
         setSize(1080, 720);
         setMinimumSize(new Dimension(980, 640));
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setLayout(new BorderLayout());
 
         panelSolicitudes = new PanelSolicitudes();
@@ -50,6 +52,18 @@ public class VentanaPrincipal extends JFrame implements VisualizadorMensajes{
         add(crearEncabezado(), BorderLayout.NORTH);
         add(crearPestanas(), BorderLayout.CENTER);
         add(crearBarraInferior(), BorderLayout.SOUTH);
+
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                if (confirmar("¿Deseas cerrar la aplicacion?", "Salir")) {
+                    dispose();
+                }
+            }
+        });
+
         setLocationRelativeTo(null);
         setVisible(true);
     }
@@ -111,20 +125,54 @@ public class VentanaPrincipal extends JFrame implements VisualizadorMensajes{
     public void agregarFila(JTable tabla, Object[] datos) {
         ((DefaultTableModel) tabla.getModel()).addRow(datos);
     }
-   
-    public JButton getBtnDeshacer() { return btnDeshacer; }
-    public JButton getBtnExportar() { return btnExportar; }
-    public JButton getBtnActualizar() { return btnActualizar; }
 
-    public JTable getTablaPendientes() { return panelSolicitudes.getTablaPendientes(); }
-    public JTable getTablaEjecucion() { return panelSolicitudes.getTablaEjecucion(); }
-    public JTable getTablaCerrados() { return panelSolicitudes.getTablaCerrados(); }
-    public JTable getTablaUnidades() { return panelRecursos.getTablaUnidades(); }
-    public JTable getTablaClientes() { return panelClientes.getTablaClientes(); }
-    public JTable getTablaTecnicos() { return panelTecnicos.getTablaTecnicos(); }
-    public JTable getTablaKits() { return panelKits.getTablaKits(); }
-    public JTable getTablaRepuestos() { return panelRepuestos.getTablaRepuestos(); }
-    public JTable getTablaHistorial() { return panelHistorial.getTablaHistorial(); }
+    public JButton getBtnDeshacer() {
+        return btnDeshacer;
+    }
+
+    public JButton getBtnExportar() {
+        return btnExportar;
+    }
+
+    public JButton getBtnActualizar() {
+        return btnActualizar;
+    }
+
+    public JTable getTablaPendientes() {
+        return panelSolicitudes.getTablaPendientes();
+    }
+
+    public JTable getTablaEjecucion() {
+        return panelSolicitudes.getTablaEjecucion();
+    }
+
+    public JTable getTablaCerrados() {
+        return panelSolicitudes.getTablaCerrados();
+    }
+
+    public JTable getTablaUnidades() {
+        return panelRecursos.getTablaUnidades();
+    }
+
+    public JTable getTablaClientes() {
+        return panelClientes.getTablaClientes();
+    }
+
+    public JTable getTablaTecnicos() {
+        return panelTecnicos.getTablaTecnicos();
+    }
+
+    public JTable getTablaKits() {
+        return panelKits.getTablaKits();
+    }
+
+    public JTable getTablaRepuestos() {
+        return panelRepuestos.getTablaRepuestos();
+    }
+
+    public JTable getTablaHistorial() {
+        return panelHistorial.getTablaHistorial();
+    }
 
     public void limpiarFormularioSolicitud() {
         panelSolicitudes.limpiarFormulario();
@@ -135,12 +183,12 @@ public class VentanaPrincipal extends JFrame implements VisualizadorMensajes{
         txtMensajes.append("> " + mensaje + "\n");
         txtMensajes.setCaretPosition(txtMensajes.getDocument().getLength());
     }
-    
+
     @Override
     public void mostrarMensajeError(String mensaje, String titulo) {
         JOptionPane.showMessageDialog(null, mensaje, titulo, JOptionPane.ERROR_MESSAGE);
     }
-   
+
     @Override
     public void mostrarMensajeError(String mensaje) {
         mostrarMensajeError(mensaje, null);
@@ -168,7 +216,7 @@ public class VentanaPrincipal extends JFrame implements VisualizadorMensajes{
 
     public PanelKits getPanelKits() {
         return panelKits;
-    }       
+    }
 
     public PanelRepuestos getPanelRepuestos() {
         return panelRepuestos;
@@ -176,7 +224,7 @@ public class VentanaPrincipal extends JFrame implements VisualizadorMensajes{
 
     public PanelTecnicos getPanelTecnicos() {
         return panelTecnicos;
-    }    
+    }
 
     public PanelSolicitudes getPanelSolicitudes() {
         return panelSolicitudes;
@@ -196,6 +244,23 @@ public class VentanaPrincipal extends JFrame implements VisualizadorMensajes{
 
     public JTabbedPane getTabs() {
         return tabs;
-    }        
+    }
+
+    public static boolean confirmar(String mensaje, String titulo) {
+        Object[] opciones = {"Sí", "No"};
+
+        int opcion = JOptionPane.showOptionDialog(
+                null,
+                mensaje,
+                titulo,
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                opciones,
+                opciones[0]
+        );
+
+        return opcion == 0;
+    }
 
 }
