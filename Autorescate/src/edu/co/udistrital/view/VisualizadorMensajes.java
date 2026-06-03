@@ -1,4 +1,4 @@
-package edu.co.udistrital.controller;
+package edu.co.udistrital.view;
 
 public interface VisualizadorMensajes {
 
