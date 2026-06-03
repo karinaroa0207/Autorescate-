@@ -56,6 +56,7 @@ public class ControlClientes {
         actualizarTabla();
         actualizarSelectorSolicitudes();
         vMensajes.mostrarMensaje("Cliente " + nombre + " registrado.", "Exito");
+        vMensajes.agregarMensaje("Cliente " + nombre + " actualizado.");
     }
 
     public void modificarCliente(String documento, String nombre, String telefono, String placa, String modeloVehiculo) {
@@ -66,6 +67,7 @@ public class ControlClientes {
             actualizarTabla();
             actualizarSelectorSolicitudes();
             vMensajes.mostrarMensaje("Cliente " + nombre + " actualizado.", "Info");
+            vMensajes.agregarMensaje("Cliente " + nombre + " actualizado.");
             return;
         }
         vMensajes.mostrarMensaje("No se encontro el cliente seleccionado.", "Info");
@@ -103,6 +105,7 @@ public class ControlClientes {
             actualizarTabla();
             actualizarSelectorSolicitudes();
             vMensajes.mostrarMensaje("Cliente eliminado con exito.", "Info");
+            vMensajes.agregarMensaje("Cliente eliminado con exito.");
             return;
         }
         vMensajes.mostrarMensaje("No se encontro el cliente seleccionado.", "Info");

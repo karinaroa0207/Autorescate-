@@ -150,7 +150,7 @@ public class ControlSolicitudes {
             vMensajes.mostrarMensaje("Seleccione una unidad y luego un tecnico disponible antes de confirmar el despacho.");
             return;
         } 
-        // obtener tipo de repuesto deseado (opcional)
+        
         String tipoSeleccionado = pAsig.getTipoRepuestoSeleccionado();
         TipoRepuesto tipoReq = null;
         if (tipoSeleccionado != null && !tipoSeleccionado.trim().isEmpty()) {

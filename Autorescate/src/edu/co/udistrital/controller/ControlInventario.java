@@ -30,12 +30,15 @@ public class ControlInventario {
         }
         Kit kit = new Kit(nombre, descripcion);
         gestor.agregarKit(kit);
+        vMensajes.mostrarMensaje("Kit " + nombre + " creado");
+        vMensajes.agregarMensaje("Kit " + nombre + " creado");
         actualizarTabla();
     }
 
     public void revisarKit() {
         if (gestor.revisarKit() != null) {
             vMensajes.mostrarMensaje("Kit Listo");
+            vMensajes.agregarMensaje("Kit Listo");
             actualizarTabla();
         } else {
             vMensajes.mostrarMensaje("No hay kits para revisar");
@@ -58,12 +61,14 @@ public class ControlInventario {
             default:
                 break;
         }
-        if (kits == null) return;
-        TablaUtils.limpiarTabla(vista.getTablaKits());        
+        if (kits == null) {
+            return;
+        }
+        TablaUtils.limpiarTabla(vista.getTablaKits());
         for (int i = 0; i < kits.size(); i++) {
             Kit kit = kits.get(i);
             TablaUtils.agregarFila(vista.getTablaKits(), FilasTabla.kit(kit));
-        }        
+        }
     }
 
 }

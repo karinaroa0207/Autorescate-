@@ -50,6 +50,7 @@ public class ControlTecnico {
         vista.limpiarFormulario();
         actualizarTabla();
         vMensajes.mostrarMensaje("Tecnico " + nombre + " registrado.", "Exito");
+        vMensajes.agregarMensaje("Tecnico " + nombre + " registrado.");
     }
 
     public void modificarTecnico(String id, String nombre, String especialidad, String zona) {
@@ -59,6 +60,7 @@ public class ControlTecnico {
             modoRegistro = true;
             actualizarTabla();
             vMensajes.mostrarMensaje("Tecnico " + nombre + " actualizado.", "Info");
+            vMensajes.agregarMensaje("Tecnico " + nombre + " actualizado.");
             return;
         }
         vMensajes.mostrarMensaje("No se encontro el tecnico seleccionado.", "Info");
@@ -100,6 +102,7 @@ public class ControlTecnico {
         if (t != null && t.getEstado() == EstadoTecnico.DISPONIBLE) {
             if (gestor.eliminarTecnico(id) != null) {
                 vMensajes.mostrarMensaje("Tecnico eliminado con exito", "Info");
+                vMensajes.agregarMensaje("Tecnico eliminado con exito");
             }
             return true;
         }

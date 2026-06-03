@@ -41,10 +41,12 @@ public class ControlUnidades {
             gestor.agregarUnidad(aux);
             vista.limpiarFormularioUnidades();
             vMensajes.mostrarMensaje("Unidad tipo " + tipo + " registrada con éxito.", "Éxito");            
+            vMensajes.agregarMensaje("Unidad tipo " + tipo + " registrada con éxito.");            
         } else {
             if(gestor.modificarUnidad(vista.getIdUnidad(), zona, EstadoUnidad.valueOf(estado))) {
                 vista.limpiarFormularioUnidades();
                 vMensajes.mostrarMensaje("Unidad tipo " + tipo + " actualizada.", "Info");                                
+                vMensajes.agregarMensaje("Unidad tipo " + tipo + " actualizada.");                                
             }                       
         }        
         vista.modoRegistro();
@@ -81,6 +83,7 @@ public class ControlUnidades {
         boolean exito = gestor.eliminarUnidad(idSeleccionado);
         if (exito) {
             vMensajes.mostrarMensaje("Unidad eliminada del sistema con éxito.", "Info");
+            vMensajes.agregarMensaje("Unidad eliminada del sistema con éxito.");
             actualizarTabla();
             return;
         }
